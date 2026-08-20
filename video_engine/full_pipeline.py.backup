@@ -1,0 +1,122 @@
+
+import json
+from pathlib import Path
+
+BASE = Path("/content/fadl_ai")
+
+
+def load_request(job_id):
+    request_file = (
+        BASE
+        / "image_to_video"
+        / f"{job_id}_request.json"
+    )
+
+    if not request_file.exists():
+        raise FileNotFoundError(
+            f"لم أجد المهمة: {job_id}"
+        )
+
+    with open(
+        request_file,
+        "r",
+        encoding="utf-8"
+    ) as f:
+        return json.load(f)
+
+
+def prepare_pipeline(job_id, dry_run=True):
+
+    request = load_request(job_id)
+
+    mode = request.get("mode")
+    speech_source = request.get("speech_source")
+    speech_text = request.get("speech_text")
+    audio = request.get("audio")
+    voice_type = request.get("voice_type")
+
+    steps = []
+
+    # 1) الحركة
+    steps.append({
+        "step": 1,
+        "name": "generate_motion",
+        "provider": "runway",
+        "required": True
+    })
+
+    # 2) تجهيز الصوت
+    if mode in ["talking", "motion_and_talking"]:
+
+        if speech_source == "text":
+            steps.append({
+                "step": 2,
+                "name": "text_to_speech",
+                "provider": "runway_tts",
+                "voice_type": voice_type,
+                "text": speech_text,
+                "required": True
+            })
+
+        elif speech_source == "audio":
+            steps.append({
+                "step": 2,
+                "name": "use_uploaded_audio",
+                "audio": audio,
+                "required": True
+            })
+
+        # 3) Lip-sync
+        steps.append({
+            "step": 3,
+            "name": "lip_sync",
+            "provider": "sync_labs",
+            "required": True
+        })
+
+    # 4) النتيجة
+    steps.append({
+        "step": 4,
+        "name": "save_final_video",
+        "required": True
+    })
+
+    result = {
+        "job_id": job_id,
+        "mode": mode,
+        "dry_run": dry_run,
+        "steps": steps
+    }
+
+    return result
+
+
+def show_pipeline(job_id, dry_run=True):
+
+    pipeline = prepare_pipeline(
+        job_id,
+        dry_run=dry_run
+    )
+
+    print("=== فضل AI Video Pipeline ===")
+    print("المهمة:", pipeline["job_id"])
+    print("الوضع:", pipeline["mode"])
+    print("Dry run:", pipeline["dry_run"])
+
+    print()
+
+    for step in pipeline["steps"]:
+        print(
+            f'{step["step"]}.',
+            step["name"],
+            "|",
+            step.get("provider", "local")
+        )
+
+    if dry_run:
+        print()
+        print("✓ هذه معاينة فقط")
+        print("✓ لم يتم إرسال أي طلب")
+        print("✓ لم يتم استهلاك Credits")
+
+    return pipeline

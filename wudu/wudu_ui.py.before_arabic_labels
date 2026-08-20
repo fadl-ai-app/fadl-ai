@@ -1,0 +1,127 @@
+
+import gradio as gr
+import json
+
+SEQUENCE_PATH = "/content/fadl_ai/wudu/wudu_sequence.json"
+
+with open(SEQUENCE_PATH, "r", encoding="utf-8") as f:
+    wudu_sequence = json.load(f)
+
+
+def render_step(index):
+    index = int(index)
+    index = max(0, min(index, len(wudu_sequence) - 1))
+
+    item = wudu_sequence[index]
+
+    details = [
+        f'العضو: {item.get("body_part", "")}',
+        f'الجهة: {item.get("side", "")}',
+        f'عدد التكرارات: {item.get("repetition_count", "")}',
+        f'الوصف: {item.get("movement_note", "")}'
+    ]
+
+    if item.get("endpoint"):
+        details.append(
+            f'نقطة النهاية: {item.get("endpoint")}'
+        )
+
+    return (
+        index,
+        f"{index + 1} / {len(wudu_sequence)}",
+        item["action"],
+        "\n".join(details)
+    )
+
+
+def next_step(index):
+    return render_step(
+        min(int(index) + 1, len(wudu_sequence) - 1)
+    )
+
+
+def previous_step(index):
+    return render_step(
+        max(int(index) - 1, 0)
+    )
+
+
+def start_wudu():
+    return render_step(0)
+
+
+def add_wudu_ui():
+
+    first = render_step(0)
+
+    step_state = gr.Number(
+        value=first[0],
+        visible=False
+    )
+
+    counter = gr.Textbox(
+        value=first[1],
+        label="رقم الخطوة",
+        interactive=False
+    )
+
+    action_box = gr.Textbox(
+        value=first[2],
+        label="الخطوة",
+        interactive=False
+    )
+
+    details_box = gr.Textbox(
+        value=first[3],
+        label="تفاصيل الحركة",
+        lines=8,
+        interactive=False
+    )
+
+    start_button = gr.Button(
+        "ابدأ الوضوء من البداية"
+    )
+
+    with gr.Row():
+        previous_button = gr.Button("السابق")
+        next_button = gr.Button("التالي")
+
+    start_button.click(
+        start_wudu,
+        inputs=None,
+        outputs=[
+            step_state,
+            counter,
+            action_box,
+            details_box
+        ]
+    )
+
+    next_button.click(
+        next_step,
+        inputs=step_state,
+        outputs=[
+            step_state,
+            counter,
+            action_box,
+            details_box
+        ]
+    )
+
+    previous_button.click(
+        previous_step,
+        inputs=step_state,
+        outputs=[
+            step_state,
+            counter,
+            action_box,
+            details_box
+        ]
+    )
+
+    return (
+        step_state,
+        counter,
+        action_box,
+        details_box
+    )

@@ -1,0 +1,156 @@
+
+import gradio as gr
+import os
+import json
+import uuid
+
+BASE = "/content/fadl_ai/text_to_video"
+REQUESTS_DIR = f"{BASE}/requests"
+OUTPUTS_DIR = f"{BASE}/outputs"
+
+os.makedirs(REQUESTS_DIR, exist_ok=True)
+os.makedirs(OUTPUTS_DIR, exist_ok=True)
+
+
+def prepare_text_video(prompt, duration, voice_type):
+
+    prompt = (prompt or "").strip()
+
+    if not prompt:
+        return "✗ اكتبي وصف الفيديو أولًا"
+
+    job_id = str(uuid.uuid4())[:8]
+
+    request_data = {
+        "job_id": job_id,
+        "prompt": prompt,
+        "duration_seconds": int(duration),
+        "voice_type": voice_type
+    }
+
+    request_path = os.path.join(
+        REQUESTS_DIR,
+        f"{job_id}.json"
+    )
+
+    with open(
+        request_path,
+        "w",
+        encoding="utf-8"
+    ) as f:
+        json.dump(
+            request_data,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
+
+    return (
+        "✓ تم تجهيز طلب نص إلى فيديو\n"
+        f"✓ رقم المهمة: {job_id}\n"
+        f"✓ المدة المطلوبة: {int(duration)} ثوانٍ\n"
+        "✓ وصف المشهد محفوظ\n"
+        "⏳ التوليد النهائي ينتظر تشغيل GPU"
+    )
+
+
+
+def get_latest_generated_video():
+
+    videos = []
+
+    for name in os.listdir(OUTPUTS_DIR):
+        if name.lower().endswith(".mp4"):
+            path = os.path.join(OUTPUTS_DIR, name)
+            videos.append(path)
+
+    if not videos:
+        return None, None
+
+    latest = max(
+        videos,
+        key=os.path.getmtime
+    )
+
+    return latest, latest
+
+
+def add_text_to_video_ui():
+
+    gr.Markdown("## نص إلى فيديو")
+
+    gr.Markdown(
+        """
+        اكتب وصف المشهد الذي تريد إنشاءه،
+        ثم اختر مدة الفيديو التقريبية.
+        """
+    )
+
+    prompt_input = gr.Textbox(
+        label="وصف الفيديو",
+        placeholder=(
+            "مثال: رجل يسير في مزرعة خضراء "
+            "والجو ممطر بهدوء"
+        ),
+        lines=5
+    )
+
+    duration_input = gr.Slider(
+        minimum=3,
+        maximum=30,
+        value=5,
+        step=1,
+        label="مدة الفيديو بالثواني"
+    )
+
+    voice_input = gr.Dropdown(
+        choices=["رجل", "امرأة", "ولد", "بنت"],
+        value="رجل",
+        label="اختر الصوت"
+    )
+
+    prepare_button = gr.Button(
+        "تجهيز نص إلى فيديو"
+    )
+
+    preview_button = gr.Button(
+        "عرض آخر فيديو مولد"
+    )
+
+    final_video = gr.Video(
+        label="معاينة الفيديو النهائي",
+        interactive=False
+    )
+
+    download_video = gr.File(
+        label="تنزيل الفيديو النهائي",
+        interactive=False
+    )
+
+    status = gr.Textbox(
+        label="حالة الطلب",
+        interactive=False,
+        lines=6
+    )
+
+    prepare_button.click(
+        fn=prepare_text_video,
+        inputs=[
+            prompt_input,
+            duration_input,
+            voice_input
+        ],
+        outputs=status
+    )
+
+    preview_button.click(
+        fn=get_latest_generated_video,
+        inputs=[],
+        outputs=[
+            final_video,
+            download_video
+        ]
+    )
+
+
+# يتم ربط عناصر المعاينة داخل add_text_to_video_ui

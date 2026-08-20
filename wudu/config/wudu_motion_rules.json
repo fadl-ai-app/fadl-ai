@@ -1,0 +1,11 @@
+{
+  "same_person": true,
+  "same_clothes": true,
+  "same_location": true,
+  "same_background": true,
+  "no_camera_gaze": true,
+  "no_unrequested_movement": true,
+  "no_unrequested_objects": true,
+  "respectful_motion": true,
+  "only_reference_motion": true
+}

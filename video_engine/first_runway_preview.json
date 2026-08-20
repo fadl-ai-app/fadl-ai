@@ -1,0 +1,11 @@
+{
+  "job_id": "48d0faf4",
+  "provider": "runway",
+  "model": "gen4.5",
+  "duration": 5,
+  "image": "/content/fadl_ai/image_to_video/input_images/48d0faf4_image.jpeg",
+  "audio_sent": false,
+  "prompt": "Remain calm and steady with only subtle natural body movement.\nKeep the mouth closed and still.\nDo not speak.\nDo not move the lips.\nDo not change facial expression.\nDo not change gaze direction.\n\nPreserve the exact same person and facial identity.\nPreserve the exact facial features, age, skin tone and hairstyle.\nPreserve the exact clothing and clothing colors.\nPreserve the exact background, location, lighting and camera framing.\nDo not zoom, pan, rotate or move the camera.\nDo not add or remove any person or object.\nDo not redesign, beautify or alter the person.\nOnly subtle natural movement is allowed.\nNo hugging, kissing, touching, flirting or invented interaction.",
+  "SEND_TO_RUNWAY": false,
+  "ratio": "832:1104"
+}

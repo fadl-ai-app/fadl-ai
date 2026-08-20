@@ -1,0 +1,28 @@
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Env / secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Colab / local
+.ipynb_checkpoints/
+.gradio/
+
+# Generated media / temp
+*.mp4
+*.mov
+*.avi
+*.wav
+*.mp3
+*.ogg
+*.tmp
+
+# Logs
+*.log

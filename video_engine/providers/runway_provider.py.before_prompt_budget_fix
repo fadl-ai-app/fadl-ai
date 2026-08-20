@@ -1,0 +1,472 @@
+
+import json
+import base64
+import mimetypes
+import requests
+import sys
+from google.colab import userdata
+from pathlib import Path
+
+VALIDATOR_DIR = "/content/fadl_ai/video_engine"
+
+if VALIDATOR_DIR not in sys.path:
+    sys.path.insert(0, VALIDATOR_DIR)
+
+import request_validator
+
+BASE = Path("/content/fadl_ai")
+JOBS_FILE = BASE / "video_engine" / "jobs.json"
+SENT_JOBS_FILE = BASE / "video_engine" / "runway_sent_jobs.json"
+
+PROVIDER_NAME = "runway"
+
+RUNWAY_SECRET_NAME = "RUNWAYML_API_SECRET"
+
+def get_runway_api_key():
+    import os
+
+    # أولًا: المفتاح المفعّل في جلسة Colab الحالية
+    env_key = os.environ.get(RUNWAY_SECRET_NAME)
+    if env_key:
+        return env_key
+
+    # ثانيًا: Colab Secrets إذا كان موجودًا
+    try:
+        return userdata.get(RUNWAY_SECRET_NAME)
+    except Exception:
+        return None
+
+
+# لا يوجد اتصال مدفوع حتى الآن
+PAID_ENGINE_ENABLED = False
+ALLOWED_PAID_JOB_ID = "ca956c3a"
+
+
+def load_jobs():
+    with open(JOBS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def get_job(job_id):
+    for job in load_jobs():
+        if job.get("job_id") == job_id:
+            return job
+    return None
+
+
+def load_request(job):
+    request_file = job.get("request_file")
+
+    if not request_file:
+        raise ValueError("ملف الطلب غير محدد")
+
+    path = Path(request_file)
+
+    if not path.exists():
+        raise FileNotFoundError(
+            f"ملف الطلب غير موجود: {path}"
+        )
+
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def prepare_runway_payload(job_id):
+
+    job = get_job(job_id)
+
+    if not job:
+        return {
+            "ready": False,
+            "message": "المهمة غير موجودة"
+        }
+
+    request = load_request(job)
+
+    job_type = job.get("type")
+
+    payload = {
+        "provider": PROVIDER_NAME,
+        "job_id": job_id,
+        "job_type": job_type,
+        "mode": request.get("mode", ""),
+
+        # وصف المستخدم الأصلي
+        "user_prompt": (
+            request.get("motion_text")
+            or request.get("prompt")
+            or request.get("scene_description")
+            or ""
+        ),
+
+        # قواعد فضل AI
+        "master_instruction":
+            request.get(
+                "master_generation_instruction",
+                ""
+            ),
+
+        "negative_instruction":
+            request.get(
+                "master_negative_instruction",
+                ""
+            ),
+
+        "image":
+            request.get("image"),
+
+        "audio":
+            request.get("audio"),
+
+        "duration":
+            (
+                request.get("duration_seconds")
+                or request.get("duration")
+                or 5
+            ),
+
+        "paid_engine_enabled":
+            PAID_ENGINE_ENABLED
+    }
+
+    return {
+        "ready": True,
+        "payload": payload,
+        "message":
+            "تم تجهيز المهمة فقط — لم يتم إرسالها أو خصم أي مبلغ"
+    }
+
+
+
+def load_sent_jobs():
+    if not SENT_JOBS_FILE.exists():
+        return []
+
+    try:
+        with open(SENT_JOBS_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+
+def job_already_sent(job_id):
+    return job_id in load_sent_jobs()
+
+
+def mark_job_sent(job_id):
+    sent = load_sent_jobs()
+
+    if job_id not in sent:
+        sent.append(job_id)
+
+    with open(SENT_JOBS_FILE, "w", encoding="utf-8") as f:
+        json.dump(sent, f, ensure_ascii=False, indent=2)
+
+
+
+
+def image_file_to_data_uri(image_path):
+    path = Path(image_path)
+
+    if not path.exists():
+        raise FileNotFoundError(
+            f"الصورة غير موجودة: {path}"
+        )
+
+    mime, _ = mimetypes.guess_type(str(path))
+
+    if mime not in (
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ):
+        raise ValueError(
+            f"نوع الصورة غير مدعوم: {mime}"
+        )
+
+    encoded = base64.b64encode(
+        path.read_bytes()
+    ).decode("ascii")
+
+    return f"data:{mime};base64,{encoded}"
+
+
+
+def send_to_runway(job_id):
+
+    if job_already_sent(job_id):
+        return {
+            "sent": False,
+            "charged": False,
+            "duplicate_blocked": True,
+            "message": "تم منع إرسال المهمة لأنها أُرسلت سابقًا."
+        }
+
+    preview = prepare_runway_payload(job_id)
+
+    if not preview.get("ready"):
+        return {
+            "sent": False,
+            "charged": False,
+            "message": preview.get(
+                "message",
+                "تعذر تجهيز المهمة"
+            )
+        }
+
+    payload = preview["payload"]
+
+    validation = request_validator.validate_request(
+        payload
+    )
+
+    if not validation.get("valid"):
+        return {
+            "sent": False,
+            "charged": False,
+            "validation_failed": True,
+            "message": validation.get(
+                "reason",
+                "الطلب غير صالح"
+            )
+        }
+
+    # حماية مقصودة
+    if job_id != ALLOWED_PAID_JOB_ID:
+        return {
+            "sent": False,
+            "charged": False,
+            "message": "هذه المهمة غير مصرح لها باستخدام Runway."
+        }
+
+    if not PAID_ENGINE_ENABLED:
+        return {
+            "sent": False,
+            "charged": False,
+            "message":
+                "المحرك المدفوع مقفول. لم يتم إرسال المهمة ولم يتم الخصم."
+        }
+
+    # لا يتم الوصول إلى هنا إلا إذا تم فتح القفل يدويًا
+    api_key = get_runway_api_key()
+
+    if not api_key:
+        return {
+            "sent": False,
+            "charged": False,
+            "message": "مفتاح Runway غير متاح"
+        }
+
+    request_data = load_request(get_job(job_id))
+
+    # =====================================================
+    # بناء البرومبت الحقيقي الذي سيصل إلى Runway
+    # =====================================================
+
+    user_prompt = (
+        request_data.get("motion_text")
+        or request_data.get("prompt")
+        or request_data.get("scene_description")
+        or ""
+    ).strip()
+
+    master_instruction = (
+        request_data.get("master_generation_instruction")
+        or ""
+    ).strip()
+
+    negative_instruction = (
+        request_data.get("master_negative_instruction")
+        or ""
+    ).strip()
+
+    prompt_parts = []
+
+    if user_prompt:
+        prompt_parts.append(
+            "USER REQUEST — EXECUTE EXACTLY:\n"
+            + user_prompt
+        )
+
+    if master_instruction:
+        prompt_parts.append(
+            "FADL AI CONTINUITY AND ACTION RULES:\n"
+            + master_instruction
+        )
+
+    if negative_instruction:
+        prompt_parts.append(
+            "DO NOT GENERATE:\n"
+            + negative_instruction
+        )
+
+    prompt = "\n\n".join(prompt_parts).strip()
+
+    speech_text = (
+        request_data.get("speech_text")
+        or ""
+    ).strip()
+
+    # نضع الكلام داخل البرومبت نفسه ليحاول النموذج توليده طبيعيًا
+    if speech_text:
+        prompt = (
+            prompt
+            + "\nThe person clearly says in Arabic: "
+            + speech_text
+        )
+
+    # قواعد جودة الحركة البشرية في فضل AI
+    human_motion_quality = """
+Natural relaxed human movement.
+Natural realistic walking pace, not fast or rushed.
+Smooth realistic body motion.
+Natural arm swing while walking.
+Anatomically correct hands and fingers.
+Five natural fingers on each hand.
+Hands remain stable and proportional.
+No warped hands or deformed fingers.
+No extra or missing fingers.
+No distorted limbs.
+No sudden or exaggerated body movement.
+Consistent human anatomy throughout the video.
+"""
+
+    prompt = prompt + "\n" + human_motion_quality.strip()
+
+    job_type = (
+        request_data.get("type")
+        or request_data.get("_request_type")
+        or get_job(job_id).get("type")
+    )
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "X-Runway-Version": "2024-11-06"
+    }
+
+    if job_type == "image_to_video":
+
+        image_path = request_data.get("image")
+
+        if not image_path:
+            return {
+                "sent": False,
+                "charged": False,
+                "message": "الصورة غير موجودة في الطلب"
+            }
+
+        image_data_uri = image_file_to_data_uri(
+            image_path
+        )
+
+        # تحويل النسب البسيطة إلى القيم التي يقبلها Runway Image-to-Video
+        ratio_map = {
+            "16:9": "1280:720",
+            "9:16": "720:1280",
+            "4:3": "1104:832",
+            "3:4": "832:1104",
+            "1:1": "960:960",
+            "21:9": "1584:672"
+        }
+
+        requested_ratio = request_data.get(
+            "ratio",
+            "16:9"
+        )
+
+        runway_ratio = ratio_map.get(
+            requested_ratio,
+            requested_ratio
+        )
+
+        allowed_ratios = {
+            "1280:720",
+            "720:1280",
+            "1104:832",
+            "832:1104",
+            "960:960",
+            "1584:672"
+        }
+
+        if runway_ratio not in allowed_ratios:
+            runway_ratio = "1280:720"
+
+        runway_payload = {
+            "model": request_data.get(
+                "model",
+                "gen4_turbo"
+            ),
+            "promptImage": image_data_uri,
+            "promptText": prompt,
+            "ratio": runway_ratio,
+            "duration": int(
+                request_data.get(
+                    "duration_seconds",
+                    5
+                )
+            )
+        }
+
+        endpoint = (
+            "https://api.dev.runwayml.com/v1/image_to_video"
+        )
+
+    else:
+
+        runway_payload = {
+            "model": request_data.get(
+                "model",
+                "grok_imagine_1_5"
+            ),
+            "promptText": prompt,
+            "ratio": request_data.get(
+                "ratio",
+                "16:9"
+            ),
+            "resolution": request_data.get(
+                "resolution",
+                "480p"
+            ),
+            "duration": int(
+                request_data.get(
+                    "duration_seconds",
+                    5
+                )
+            )
+        }
+
+        endpoint = (
+            "https://api.dev.runwayml.com/v1/text_to_video"
+        )
+
+    response = requests.post(
+        endpoint,
+        headers=headers,
+        json=runway_payload,
+        timeout=60
+    )
+
+    if response.status_code not in (200, 201):
+        return {
+            "sent": False,
+            "charged": False,
+            "http_status": response.status_code,
+            "message": response.text
+        }
+
+    data = response.json()
+
+    mark_job_sent(job_id)
+
+    return {
+        "sent": True,
+        "charged": True,
+        "task_id": data.get("id"),
+        "response": data,
+        "message": "تم إرسال المهمة إلى Runway مرة واحدة"
+    }
+
+
+print("Runway provider loaded safely")

@@ -1,0 +1,14 @@
+{
+  "person_image": "/content/fadl_ai/prayer/person_engine/input/test_person.jpeg",
+  "pose_references": {
+    "standing": "/content/fadl_ai/prayer/person_engine/references/standing_pose.png",
+    "takbir": "/content/fadl_ai/prayer/person_engine/references/takbir_pose.png",
+    "reading": "/content/fadl_ai/prayer/person_engine/references/reading_pose.png",
+    "ruku": "/content/fadl_ai/prayer/person_engine/references/ruku_pose.png",
+    "sujud": "/content/fadl_ai/prayer/person_engine/references/sujud_pose.png",
+    "sitting": "/content/fadl_ai/prayer/person_engine/references/sitting_pose.png",
+    "tashahhud": "/content/fadl_ai/prayer/person_engine/references/tashahhud_pose.png",
+    "tasleem_right": "/content/fadl_ai/prayer/person_engine/references/tasleem_right_pose.png",
+    "tasleem_left": "/content/fadl_ai/prayer/person_engine/references/tasleem_left_pose.png"
+  }
+}

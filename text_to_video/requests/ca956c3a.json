@@ -1,0 +1,14 @@
+{
+  "job_id": "ca956c3a",
+  "type": "text_to_video",
+  "model": "grok_imagine_1_5",
+  "resolution": "480p",
+  "ratio": "16:9",
+  "duration_seconds": 5,
+  "prompt": "رجل سوداني يقف في مزرعة خضراء وينظر إلى الكاميرا.\nيتحدث بشكل طبيعي وهادئ.",
+  "speech_text": "السلام عليكم",
+  "native_audio": true,
+  "estimated_credits": 50,
+  "confirmed_for_paid_generation": false,
+  "mode": "talking"
+}

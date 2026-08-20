@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "rules": {
+    "camera_gaze": false,
+    "reading_gaze": "down_toward_sujood",
+    "remain_still_during_reading": true,
+    "no_unrequested_movements": true,
+    "no_head_turning_except_tasleem": true,
+    "no_body_turning_except_required_pose": true,
+    "no_random_hand_movements": true,
+    "respect_reference_pose": true,
+    "smooth_calm_transitions": true,
+    "no_exaggerated_motion": true,
+    "tashahhud_index_finger_only_when_required": true
+  },
+  "generation_instruction": "Keep the person calm, stable and respectful during prayer. Do not look at the camera. During standing and recitation, keep the gaze lowered toward the place of prostration. Do not turn the head or body except during the prescribed tasleem movement. Do not add gestures, hand movements, facial acting, or any movement not specified by the prayer pose reference. Follow each reference pose precisely and use only calm natural transitions between prayer positions.",
+  "negative_instruction": "looking at camera, eye contact with camera, random movement, head turning, body turning, unnecessary gestures, random hand movement, waving, talking gestures, exaggerated motion, dramatic acting, dancing, pose deviation"
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "order": 1,
+    "action": "غسل الكفين",
+    "body_part": "hands",
+    "status": "needs_review"
+  },
+  {
+    "order": 2,
+    "action": "المضمضة",
+    "body_part": "mouth",
+    "status": "needs_review"
+  },
+  {
+    "order": 3,
+    "action": "الاستنشاق والاستنثار",
+    "body_part": "nose",
+    "status": "needs_review"
+  },
+  {
+    "order": 4,
+    "action": "غسل الوجه",
+    "body_part": "face",
+    "status": "needs_review"
+  },
+  {
+    "order": 5,
+    "action": "غسل الذراع اليمنى إلى المرفق",
+    "body_part": "right_arm",
+    "endpoint": "elbow",
+    "status": "needs_review"
+  },
+  {
+    "order": 6,
+    "action": "غسل الذراع اليسرى إلى المرفق",
+    "body_part": "left_arm",
+    "endpoint": "elbow",
+    "status": "needs_review"
+  },
+  {
+    "order": 7,
+    "action": "مسح الرأس",
+    "body_part": "head",
+    "status": "needs_review"
+  },
+  {
+    "order": 8,
+    "action": "مسح الأذنين",
+    "body_part": "ears",
+    "status": "needs_review"
+  },
+  {
+    "order": 9,
+    "action": "غسل الرجل اليمنى إلى الكعب",
+    "body_part": "right_foot",
+    "endpoint": "ankle",
+    "status": "needs_review"
+  },
+  {
+    "order": 10,
+    "action": "غسل الرجل اليسرى إلى الكعب",
+    "body_part": "left_foot",
+    "endpoint": "ankle",
+    "status": "needs_review"
+  }
+]

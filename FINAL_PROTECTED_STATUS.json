@@ -1,0 +1,17 @@
+{
+  "project": "FADL AI",
+  "date": "2026-08-19",
+  "status": "FINAL_PROTECTED",
+  "ui_final": true,
+  "welcome_screen": true,
+  "official_identity": true,
+  "content_safety_guard": true,
+  "content_safety_test": "10/10",
+  "profanity_guard": true,
+  "islamic_modesty_guard": true,
+  "credit_protection": true,
+  "max_credits_per_job": 50,
+  "global_daily_credit_limit": 500,
+  "runway_used_during_save": false,
+  "credits_used_during_save": false
+}

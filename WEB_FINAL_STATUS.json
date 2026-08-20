@@ -1,0 +1,53 @@
+{
+  "project": "FADL AI",
+  "date": "2026-08-20",
+  "status": "WEB_FINAL_COMPLETE",
+  "ui": {
+    "welcome_screen": true,
+    "official_banner": true,
+    "official_icon": true,
+    "green_gold_identity": true,
+    "gradio_footer_hidden": true
+  },
+  "quran": {
+    "web_text": true,
+    "audio": true
+  },
+  "prayer": {
+    "adhan": true,
+    "iqama": true,
+    "two_rakah": true,
+    "reading_video": true,
+    "rabbi_ighfir_li_video": true,
+    "tashahhud_video": true
+  },
+  "text_to_video": {
+    "web_test": "passed",
+    "talking_silent": true,
+    "motion_options": true,
+    "cost_preview": true,
+    "watermark": true,
+    "saved_backup": "Fadl_AI_TEXT_TO_VIDEO_WEB_OK_2026-08-20"
+  },
+  "image_to_video": {
+    "web_test": "passed",
+    "motion_only": true,
+    "motion_and_talking": true,
+    "cost_preview": true,
+    "final_video_download": true,
+    "watermark": true,
+    "saved_backup": "Fadl_AI_IMAGE_TO_VIDEO_WEB_OK_2026-08-20"
+  },
+  "safety": {
+    "content_safety": true,
+    "profanity_guard": true,
+    "islamic_modesty_guard": true,
+    "paid_engine_lock": true,
+    "allowed_job_lock": true,
+    "daily_credit_limit": 500,
+    "max_credits_per_job": 50,
+    "web_trial_paid_generation_enabled": false
+  },
+  "runway_used_during_save": false,
+  "credits_used_during_save": false
+}

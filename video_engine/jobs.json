@@ -1,0 +1,74 @@
+[
+  {
+    "job_id": "7eda0ce4",
+    "type": "image_to_video",
+    "status": "ready",
+    "request_file": "/content/fadl_ai/image_to_video/7eda0ce4_request.json",
+    "updated_at": "2026-08-17T04:15:38.170051"
+  },
+  {
+    "job_id": "b20997f6",
+    "type": "image_to_video",
+    "status": "ready",
+    "request_file": "/content/fadl_ai/image_to_video/b20997f6_request.json",
+    "updated_at": "2026-08-17T04:15:38.170072"
+  },
+  {
+    "job_id": "df2ae4dc",
+    "type": "text_to_video",
+    "status": "ready",
+    "request_file": "/content/fadl_ai/text_to_video/requests/df2ae4dc.json",
+    "updated_at": "2026-08-17T04:15:38.170079"
+  },
+  {
+    "job_id": "d131b2a2",
+    "type": "text_to_video",
+    "status": "ready",
+    "request_file": "/content/fadl_ai/text_to_video/requests/d131b2a2.json",
+    "updated_at": "2026-08-17T04:15:38.170084"
+  },
+  {
+    "job_id": "48d0faf4",
+    "type": "image_to_video",
+    "status": "ready",
+    "validated": true,
+    "ready_for_paid_generation": true,
+    "request_file": "/content/fadl_ai/image_to_video/48d0faf4_request.json",
+    "validated_at": "2026-08-17T04:36:17.394554",
+    "provider": "runway",
+    "model": "gen4.5",
+    "duration_seconds": 5,
+    "estimated_credits": 60,
+    "estimated_cost": 0.6,
+    "currency": "USD",
+    "payment_confirmed": true,
+    "cost_estimated_at": "2026-08-17T04:38:03.966588",
+    "payment_confirmed_at": "2026-08-17T04:43:46.654492"
+  },
+  {
+    "job_id": "721710da",
+    "type": "talking",
+    "status": "ready",
+    "request_file": "/content/fadl_ai/image_to_video/721710da_request.json",
+    "payment_confirmed": false,
+    "created_at": "2026-08-17T15:08:46.190339"
+  },
+  {
+    "job_id": "ca956c3a",
+    "type": "text_to_video",
+    "request_file": "/content/fadl_ai/text_to_video/requests/ca956c3a.json",
+    "status": "prepared"
+  },
+  {
+    "job_id": "5381607f",
+    "type": "image_to_video",
+    "request_file": "/content/fadl_ai/image_to_video/5381607f_request.json",
+    "status": "prepared"
+  },
+  {
+    "job_id": "4b5deece",
+    "type": "image_to_video",
+    "request_file": "/content/fadl_ai/image_to_video/4b5deece_request.json",
+    "status": "prepared"
+  }
+]

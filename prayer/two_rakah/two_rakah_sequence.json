@@ -1,0 +1,159 @@
+[
+  {
+    "order": 1,
+    "action": "القيام",
+    "image": "01_standing.jpeg",
+    "media_type": "image"
+  },
+  {
+    "order": 2,
+    "action": "تكبيرة الإحرام",
+    "image": "02_takbir.jpeg",
+    "spoken_text": "الله أكبر",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/allahu_akbar.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 3,
+    "action": "القراءة",
+    "image": "03_reading.jpeg",
+    "quran_audio": "/content/fadl_ai/prayer/audio/fatiha_plus_112.mp3",
+    "fatiha_required": true,
+    "after_fatiha_surah": {
+      "number": 112,
+      "name": "الإخلاص"
+    },
+    "reading_text": "الفاتحة + سورة الإخلاص",
+    "video": "/content/fadl_ai/prayer/reading/reading_preview.mp4",
+    "media_type": "video"
+  },
+  {
+    "order": 4,
+    "action": "الركوع",
+    "image": "04_ruku.jpeg",
+    "spoken_text": "سبحان ربي العظيم",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/subhana_rabbiyal_azim.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 5,
+    "action": "الاعتدال من الركوع",
+    "image": "01_standing.jpeg",
+    "spoken_text": "سمع الله لمن حمده، ربنا ولك الحمد",
+    "audio_1": "/content/fadl_ai/prayer/audio/adhkar/sami_allahu_liman_hamidah.ogg",
+    "audio_2": "/content/fadl_ai/prayer/audio/adhkar/rabbana_wa_lakal_hamd.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 6,
+    "action": "السجدة الأولى",
+    "image": "05_sujud.jpeg",
+    "spoken_text": "سبحان ربي الأعلى",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/subhana_rabbiyal_ala.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 7,
+    "action": "الجلوس بين السجدتين",
+    "image": "06_sitting_between_sujood.jpeg",
+    "spoken_text": "رب اغفر لي",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/rabbi_ighfir_li.ogg",
+    "video": "/content/fadl_ai/prayer/rabbi_ighfir_li/rabbi_ighfir_li_preview.mp4",
+    "media_type": "video"
+  },
+  {
+    "order": 8,
+    "action": "السجدة الثانية",
+    "image": "05_sujud.jpeg",
+    "spoken_text": "سبحان ربي الأعلى",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/subhana_rabbiyal_ala.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 9,
+    "action": "القيام للركعة الثانية",
+    "image": "03_reading.jpeg",
+    "media_type": "image"
+  },
+  {
+    "order": 10,
+    "action": "القراءة",
+    "image": "03_reading.jpeg",
+    "quran_audio": "/content/fadl_ai/prayer/audio/fatiha_plus_112.mp3",
+    "fatiha_required": true,
+    "after_fatiha_surah": {
+      "number": 112,
+      "name": "الإخلاص"
+    },
+    "reading_text": "الفاتحة + سورة الإخلاص",
+    "video": "/content/fadl_ai/prayer/reading/reading_preview.mp4",
+    "media_type": "video"
+  },
+  {
+    "order": 11,
+    "action": "الركوع",
+    "image": "04_ruku.jpeg",
+    "spoken_text": "سبحان ربي العظيم",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/subhana_rabbiyal_azim.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 12,
+    "action": "الاعتدال من الركوع",
+    "image": "01_standing.jpeg",
+    "spoken_text": "سمع الله لمن حمده، ربنا ولك الحمد",
+    "audio_1": "/content/fadl_ai/prayer/audio/adhkar/sami_allahu_liman_hamidah.ogg",
+    "audio_2": "/content/fadl_ai/prayer/audio/adhkar/rabbana_wa_lakal_hamd.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 13,
+    "action": "السجدة الأولى",
+    "image": "05_sujud.jpeg",
+    "spoken_text": "سبحان ربي الأعلى",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/subhana_rabbiyal_ala.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 14,
+    "action": "الجلوس بين السجدتين",
+    "image": "06_sitting_between_sujood.jpeg",
+    "spoken_text": "رب اغفر لي",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/rabbi_ighfir_li.ogg",
+    "video": "/content/fadl_ai/prayer/rabbi_ighfir_li/rabbi_ighfir_li_preview.mp4",
+    "media_type": "video"
+  },
+  {
+    "order": 15,
+    "action": "السجدة الثانية",
+    "image": "05_sujud.jpeg",
+    "spoken_text": "سبحان ربي الأعلى",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/subhana_rabbiyal_ala.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 16,
+    "action": "التشهد",
+    "image": "07_tashahhud.jpeg",
+    "audio": "/content/fadl_ai/prayer/audio/tashahhud_plus_ibrahimiyyah.mp3",
+    "spoken_text": "التشهد ثم الصلاة الإبراهيمية",
+    "video": "/content/fadl_ai/prayer/tashahhud/tashahhud_preview.mp4",
+    "media_type": "video"
+  },
+  {
+    "order": 17,
+    "action": "التسليم يمين",
+    "image": "08_tasleem_right.jpeg",
+    "spoken_text": "السلام عليكم ورحمة الله",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/assalamu_alaykum_wa_rahmatullah.ogg",
+    "media_type": "image"
+  },
+  {
+    "order": 18,
+    "action": "التسليم يسار",
+    "image": "09_tasleem_left.jpeg",
+    "spoken_text": "السلام عليكم ورحمة الله",
+    "audio": "/content/fadl_ai/prayer/audio/adhkar/assalamu_alaykum_wa_rahmatullah.ogg",
+    "media_type": "image"
+  }
+]

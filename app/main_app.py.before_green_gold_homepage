@@ -1,0 +1,264 @@
+
+import sys
+import gradio as gr
+
+QURAN_CODE_DIR = "/content/fadl_ai/quran/code"
+PRAYER_DIR = "/content/fadl_ai/prayer"
+WUDU_DIR = "/content/fadl_ai/wudu/code"
+IMAGE_TO_VIDEO_DIR = "/content/fadl_ai/image_to_video/code"
+TEXT_TO_VIDEO_DIR = "/content/fadl_ai/text_to_video/code"
+
+for path in [
+    QURAN_CODE_DIR,
+    PRAYER_DIR,
+    WUDU_DIR,
+    IMAGE_TO_VIDEO_DIR,
+    TEXT_TO_VIDEO_DIR
+]:
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+import quran_ui
+import prayer_ui
+import wudu_ui
+import image_to_video_ui
+import text_to_video_ui
+
+
+def create_main_app():
+
+    welcome_css = """
+    #fadl-welcome {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: linear-gradient(
+            160deg,
+            #ffffff 0%,
+            #f5faf7 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        direction: rtl;
+        animation: fadlFadeOut 0.7s ease 2.3s forwards;
+    }
+
+    #fadl-welcome .fadl-card {
+        animation: fadlWelcomeIn 0.8s ease;
+    }
+
+    #fadl-welcome .fadl-smile {
+        font-size: 72px;
+        display: block;
+        margin-bottom: 12px;
+        animation: fadlSmile 1.2s ease-in-out infinite;
+    }
+
+    #fadl-welcome h1 {
+        font-size: 36px;
+        margin: 8px 0;
+    }
+
+    #fadl-welcome h2 {
+        font-size: 25px;
+        margin: 8px 0;
+        font-weight: 600;
+    }
+
+    #fadl-welcome p {
+        font-size: 17px;
+        opacity: 0.75;
+        margin-top: 16px;
+    }
+
+    @keyframes fadlWelcomeIn {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadlSmile {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+        50% {
+            transform: scale(1.08) rotate(4deg);
+        }
+    }
+
+    @keyframes fadlFadeOut {
+        from {
+            opacity: 1;
+            visibility: visible;
+        }
+        to {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    }
+    """
+
+    with gr.Blocks(
+        title="فضل AI"
+    ) as app:
+
+        gr.HTML(
+            """
+            <div id="fadl-welcome">
+                <div class="fadl-card">
+
+                    <span class="fadl-smile">
+                        😊
+                    </span>
+
+                    <h1>السلام عليكم</h1>
+
+                    <h2>
+                        أهلًا بيك في فضل AI
+                    </h2>
+
+                    <p>
+                        ذكاء يساعدك بإبداع…
+                        بقيم نحافظ عليها.
+                    </p>
+
+                </div>
+            </div>
+            """
+        )
+
+        gr.Markdown(
+            """
+            # فضل AI
+            ### منصة الذكاء الاصطناعي
+            """
+        )
+
+        with gr.Tabs():
+
+            # الرئيسية
+            with gr.Tab("الرئيسية"):
+                gr.Markdown(
+                    """
+                    ## مرحبًا بك في فضل AI
+
+                    اختر القسم الذي تريد استخدامه.
+                    """
+                )
+
+            # القرآن
+            with gr.Tab("القرآن الكريم"):
+
+                surah_choices = [
+                    f'{num} - {quran_ui.quran_db[str(num)]["name"]}'
+                    for num in range(1, 115)
+                ]
+
+                gr.Markdown("## القرآن الكريم")
+
+                surah_menu = gr.Dropdown(
+                    choices=surah_choices,
+                    value="1 - الفاتحة",
+                    label="اختر السورة"
+                )
+
+                quran_button = gr.Button(
+                    "عرض السورة وتشغيل التلاوة"
+                )
+
+                quran_text = gr.Textbox(
+                    label="نص السورة",
+                    lines=16,
+                    interactive=False
+                )
+
+                quran_audio = gr.Audio(
+                    label="التلاوة",
+                    type="filepath"
+                )
+
+                quran_button.click(
+                    fn=quran_ui.prepare_surah,
+                    inputs=surah_menu,
+                    outputs=[
+                        quran_text,
+                        quran_audio
+                    ]
+                )
+
+            # الصلاة
+            with gr.Tab("الصلاة"):
+
+                gr.Markdown(
+                    "## الصلاة بالصوت والحركات"
+                )
+
+                (
+                    step_state,
+                    counter,
+                    action_box,
+                    details_box,
+                    image_box,
+                    audio_box
+                ) = prayer_ui.add_prayer_ui()
+
+                app.load(
+                    fn=lambda: prayer_ui.render_step(0),
+                    inputs=[],
+                    outputs=[
+                        step_state,
+                        counter,
+                        action_box,
+                        details_box,
+                        image_box,
+                        audio_box
+                    ]
+                )
+
+            # الوضوء
+            with gr.Tab("الوضوء"):
+
+                gr.Markdown(
+                    "## الوضوء خطوة بخطوة"
+                )
+
+                (
+                    wudu_state,
+                    wudu_counter,
+                    wudu_name,
+                    wudu_image
+                ) = wudu_ui.add_wudu_ui()
+
+                app.load(
+                    fn=lambda: wudu_ui.render_step(0),
+                    inputs=[],
+                    outputs=[
+                        wudu_state,
+                        wudu_counter,
+                        wudu_name,
+                        wudu_image
+                    ]
+                )
+
+            # صورة إلى فيديو
+            with gr.Tab("صورة إلى فيديو"):
+                image_to_video_ui.add_image_to_video_ui()
+
+            # نص إلى فيديو
+            with gr.Tab("نص إلى فيديو"):
+                text_to_video_ui.add_text_to_video_ui()
+
+    return app
+
+
+if __name__ == "__main__":
+    app = create_main_app()
+    app.launch(css=welcome_css)

@@ -1,0 +1,176 @@
+import json
+from pathlib import Path
+from providers import sadtalker_provider
+
+BASE = Path("/content/fadl_ai")
+
+
+def load_request(job_id):
+
+    image_request = (
+        BASE
+        / "image_to_video"
+        / f"{job_id}_request.json"
+    )
+
+    text_request = (
+        BASE
+        / "text_to_video"
+        / "requests"
+        / f"{job_id}.json"
+    )
+
+    if image_request.exists():
+        with open(image_request, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        data["_request_type"] = "image_to_video"
+        return data
+
+    if text_request.exists():
+        with open(text_request, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        data["_request_type"] = "text_to_video"
+        return data
+
+    raise FileNotFoundError(
+        f"لم أجد المهمة: {job_id}"
+    )
+
+
+def prepare_pipeline(job_id, dry_run=True):
+
+    request = load_request(job_id)
+
+    request_type = request.get("_request_type")
+
+    mode = request.get("mode")
+    speech_source = request.get("speech_source")
+    speech_text = request.get("speech_text")
+    audio = request.get("audio")
+    voice_type = request.get("voice_type")
+
+    steps = []
+
+    # 1) الفيديو الأساسي
+    if request_type == "text_to_video":
+
+        steps.append({
+            "step": 1,
+            "name": "text_to_video",
+            "provider": "runway",
+            "prompt": request.get("prompt"),
+            "duration_seconds": request.get("duration_seconds"),
+            "required": True
+        })
+
+    else:
+
+        steps.append({
+            "step": 1,
+            "name": "generate_motion",
+            "provider": "runway",
+            "image": request.get("image"),
+            "motion_text": request.get("motion_text"),
+            "required": True
+        })
+
+    # 2) الصوت في صورة → فيديو عند وجود كلام
+    if mode in ["talking", "motion_and_talking"]:
+
+        if speech_source == "text":
+            steps.append({
+                "step": 2,
+                "name": "text_to_speech",
+                "provider": "elevenlabs",
+                "voice_type": voice_type,
+                "text": speech_text,
+                "required": True
+            })
+
+        elif speech_source == "audio":
+            steps.append({
+                "step": 2,
+                "name": "use_uploaded_audio",
+                "audio": audio,
+                "required": True
+            })
+
+        steps.append({
+            "step": 3,
+            "name": "lip_sync",
+            "provider": "sadtalker",
+            "required": True
+        })
+
+    # 4) النتيجة
+    steps.append({
+        "step": 4,
+        "name": "save_final_video",
+        "required": True
+    })
+
+    result = {
+        "job_id": job_id,
+        "mode": mode,
+        "dry_run": dry_run,
+        "steps": steps
+    }
+
+    return result
+
+
+def show_pipeline(job_id, dry_run=True):
+
+    pipeline = prepare_pipeline(
+        job_id,
+        dry_run=dry_run
+    )
+
+    print("=== فضل AI Video Pipeline ===")
+    print("المهمة:", pipeline["job_id"])
+    print("الوضع:", pipeline["mode"])
+    print("Dry run:", pipeline["dry_run"])
+
+    print()
+
+    for step in pipeline["steps"]:
+        print(
+            f'{step["step"]}. '
+            f'{step["name"]}'
+        )
+
+    if dry_run:
+        print()
+        print("✓ هذه معاينة فقط")
+        print("✓ لم يتم إرسال أي طلب")
+        print("✓ لم يتم استهلاك Credits")
+
+    return pipeline
+
+
+def execute_local_lipsync(job_id, source_image, audio_path):
+    """
+    تشغيل SadTalker محليًا.
+    لا يستخدم Runway ولا Credits.
+    """
+
+    output_dir = (
+        BASE
+        / "image_to_video"
+        / "outputs"
+        / job_id
+    )
+
+    output_dir.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    return sadtalker_provider.run_lipsync(
+        job_id=job_id,
+        source_image=source_image,
+        driven_audio=audio_path,
+        output_dir=output_dir
+    )

@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "غسل الكفين",
+    "image": "01_hands.jpg"
+  },
+  {
+    "id": 2,
+    "name": "المضمضة",
+    "image": "02_mouth.jpg"
+  },
+  {
+    "id": 3,
+    "name": "الاستنشاق",
+    "image": "03_nose.jpg"
+  },
+  {
+    "id": 4,
+    "name": "غسل الوجه",
+    "image": "04_face.jpg"
+  },
+  {
+    "id": 5,
+    "name": "غسل اليدين إلى المرفقين",
+    "image": "05_arms.jpg"
+  },
+  {
+    "id": 6,
+    "name": "مسح الرأس",
+    "image": "06_head.jpg"
+  },
+  {
+    "id": 7,
+    "name": "مسح الأذنين",
+    "image": "07_ears.jpg"
+  },
+  {
+    "id": 8,
+    "name": "غسل القدمين إلى الكعبين",
+    "image": "08_feet.jpg"
+  }
+]

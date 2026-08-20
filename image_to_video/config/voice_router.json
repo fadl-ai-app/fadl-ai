@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "rules": {
+    "auto_select_by_voice_type": true,
+    "respect_language": true,
+    "respect_dialect": true,
+    "child_voice_natural": true,
+    "avoid_cartoon_child_voice": true,
+    "fallback_to_general_language_voice": true
+  },
+  "voice_types": {
+    "امرأة": {
+      "category": "adult_female"
+    },
+    "رجل": {
+      "category": "adult_male"
+    },
+    "بنت": {
+      "category": "child_female"
+    },
+    "ولد": {
+      "category": "child_male"
+    },
+    "تلقائي": {
+      "category": "auto"
+    }
+  },
+  "routing_template": {
+    "provider": "runway_tts",
+    "model": "eleven_multilingual_v2",
+    "language_code": null,
+    "dialect": null,
+    "voice_type": null,
+    "preset_id": null
+  },
+  "default_provider": "elevenlabs",
+  "approved_voices": {
+    "امرأة": {
+      "name": "Sara",
+      "voice_id": "jAAHNNqlbAX9iWjJPEtE",
+      "provider": "elevenlabs",
+      "approved": true
+    },
+    "رجل": {
+      "name": "Ali",
+      "voice_id": "Hvlnv5DwiIO2CQ6oYMZ3",
+      "provider": "elevenlabs",
+      "approved": true
+    },
+    "بنت": {
+      "name": "Kano",
+      "voice_id": "OSwaPSNdfituxkWcjlkR",
+      "provider": "elevenlabs",
+      "approved": true
+    },
+    "ولد": {
+      "name": "Simran",
+      "voice_id": "1ea3IFhmSWgw8sJkSvfJ",
+      "provider": "elevenlabs",
+      "approved": true
+    }
+  },
+  "auto_voice": {
+    "enabled": true,
+    "provider": "elevenlabs",
+    "select_from_approved_voices": true
+  }
+}
