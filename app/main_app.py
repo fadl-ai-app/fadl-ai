@@ -363,8 +363,10 @@ def create_main_app():
                     interactive=False
                 )
 
-                quran_audio = gr.HTML(
-                    value="<div>اختر السورة ثم اضغط تشغيل التلاوة</div>"
+                quran_audio = gr.Audio(
+                    label="التلاوة",
+                    type="filepath",
+                    autoplay=True
                 )
 
                 quran_button.click(
@@ -470,8 +472,5 @@ if __name__ == "__main__":
         share=False,
         server_name="0.0.0.0",
         server_port=int(os.environ.get("PORT", "7860")),
-        allowed_paths=[
-            project_root,
-            "/tmp/fadl_quran_audio"
-        ]
+        allowed_paths=[project_root]
     )

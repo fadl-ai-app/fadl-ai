@@ -1,5 +1,3 @@
-from pathlib import Path
-import requests
 import os
 import gradio as gr
 import json
@@ -27,58 +25,13 @@ quran_engine.configure(
     quran_db
 )
 
-
-QURAN_WEB_CACHE = Path("/tmp/fadl_quran_audio")
-QURAN_WEB_CACHE.mkdir(parents=True, exist_ok=True)
-
-
-def cache_remote_audio(audio_url, surah_number):
-    """
-    ينزل السورة المطلوبة فقط إلى /tmp باستخدام streaming.
-    لا يستخدم pydub ولا يحمل الملف كاملًا في الذاكرة.
-    """
-    output = QURAN_WEB_CACHE / f"surah_{int(surah_number):03d}.mp3"
-
-    if output.exists() and output.stat().st_size > 0:
-        print("[QURAN] ✅ الصوت موجود في cache:", output)
-        return str(output)
-
-    print("[QURAN] جاري تنزيل السورة مؤقتًا...")
-
-    with requests.get(
-        audio_url,
-        stream=True,
-        timeout=(20, 300)
-    ) as response:
-
-        response.raise_for_status()
-
-        with open(output, "wb") as f:
-            for chunk in response.iter_content(
-                chunk_size=1024 * 1024
-            ):
-                if chunk:
-                    f.write(chunk)
-
-    if output.exists() and output.stat().st_size > 0:
-        print(
-            "[QURAN] ✅ تم تنزيل الصوت المؤقت:",
-            output,
-            "الحجم:",
-            output.stat().st_size
-        )
-        return str(output)
-
-    print("[QURAN] ❌ فشل إنشاء الملف المؤقت")
-    return None
-
-
 def prepare_surah(choice):
     surah_number = int(choice.split(" - ")[0])
     surah = quran_db[str(surah_number)]
 
     lines = [
         f'سورة {surah["name"]}',
+        f'عدد الآيات: {surah["ayah_count"]}',
         ""
     ]
 
@@ -87,37 +40,11 @@ def prepare_surah(choice):
             f'{ayah["ayah"]} - {ayah["text"]}'
         )
 
-    print(f"[QURAN] طلب السورة: {surah_number}")
-
-    audio_url = quran_engine.get_surah_audio(
+    audio_path = quran_engine.get_surah_audio(
         surah_number
     )
 
-    if isinstance(audio_url, str) and audio_url.startswith(("http://", "https://")):
-        print("[QURAN] ✅ رابط الحصري جاهز:", audio_url)
-
-        audio_html = f"""
-        <div style="width:100%; direction:rtl;">
-            <audio
-                controls
-                preload="metadata"
-                style="width:100%;"
-                src="{audio_url}">
-            </audio>
-            <div style="margin-top:6px; font-size:14px;">
-                التلاوة بصوت الشيخ محمود خليل الحصري
-            </div>
-        </div>
-        """
-
-        return "\n".join(lines), audio_html
-
-    print("[QURAN] ❌ لم يصل رابط صوت صالح")
-
-    return (
-        "\n".join(lines),
-        "<div>تعذر تحميل التلاوة.</div>"
-    )
+    return "\n".join(lines), audio_path
 
 
 def create_quran_ui():

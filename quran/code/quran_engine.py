@@ -12,7 +12,6 @@ AUTH_URL = "https://prelive-oauth2.quran.foundation/oauth2/token"
 QF_CLIENT_ID = None
 QF_CLIENT_SECRET = None
 QF_ACCESS_TOKEN = None
-CHAPTER_AUDIO_MAP = {}
 quran_db = None
 
 
@@ -57,92 +56,7 @@ def refresh_qf_token():
     return True
 
 
-
-
-def load_husary_chapter_map():
-    global CHAPTER_AUDIO_MAP, QF_ACCESS_TOKEN
-
-    if CHAPTER_AUDIO_MAP:
-        return True
-
-    if not QF_ACCESS_TOKEN:
-        if not refresh_qf_token():
-            return False
-
-    def fetch():
-        return requests.get(
-            f"{BASE_URL}/chapter_recitations/6",
-            headers={
-                "x-auth-token": QF_ACCESS_TOKEN,
-                "x-client-id": QF_CLIENT_ID
-            },
-            timeout=30
-        )
-
-    try:
-        r = fetch()
-
-        if r.status_code in (401, 403):
-            if refresh_qf_token():
-                r = fetch()
-
-        print("Chapter recitations status:", r.status_code)
-
-        if not r.ok:
-            print("✗ تعذر جلب قائمة السور الكاملة")
-            return False
-
-        files = r.json().get("audio_files", [])
-
-        CHAPTER_AUDIO_MAP = {
-            int(item["chapter_id"]): item["audio_url"]
-            for item in files
-            if item.get("chapter_id") and item.get("audio_url")
-        }
-
-        print("✓ عدد روابط السور:", len(CHAPTER_AUDIO_MAP))
-
-        return len(CHAPTER_AUDIO_MAP) == 114
-
-    except Exception as e:
-        print("✗ خطأ في تحميل روابط السور:", e)
-        return False
-
-
-
 def get_surah_audio(surah_number, reciter_id=6, force_rebuild=False):
-    """
-    يعيد رابط السورة كاملة بصوت الشيخ محمود خليل الحصري.
-    لا تنزيل، لا دمج، لا تخزين محلي على Render.
-    """
-    surah_number = int(surah_number)
-
-    if not 1 <= surah_number <= 114:
-        print("✗ رقم السورة غير صحيح")
-        return None
-
-    if not load_husary_chapter_map():
-        print("✗ تعذر تحميل خريطة تلاوات الحصري")
-        return None
-
-    audio_url = CHAPTER_AUDIO_MAP.get(surah_number)
-
-    if not audio_url:
-        print(f"✗ لا يوجد رابط للسورة {surah_number}")
-        return None
-
-    if audio_url.startswith("//"):
-        audio_url = "https:" + audio_url
-
-    print(
-        f"✓ سورة {surah_number:03d} جاهزة "
-        "بصوت محمود خليل الحصري"
-    )
-
-    return audio_url
-
-
-def get_surah_audio_legacy(surah_number, reciter_id=6, force_rebuild=False):
     global QF_ACCESS_TOKEN
 
     surah_number = int(surah_number)
