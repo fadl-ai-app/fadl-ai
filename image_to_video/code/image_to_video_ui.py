@@ -13,7 +13,9 @@ if VIDEO_ENGINE_DIR not in sys.path:
 
 import full_pipeline
 
-BASE = "/content/fadl_ai/image_to_video"
+BASE = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..")
+)
 IMAGE_DIR = f"{BASE}/input_images"
 AUDIO_DIR = f"{BASE}/input_audio"
 CONFIG_PATH = f"{BASE}/config/motion_config.json"

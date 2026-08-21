@@ -4,7 +4,7 @@ import json
 import os
 from pydub import AudioSegment
 
-SEQUENCE_PATH = "/content/fadl_ai/prayer/two_rakah/two_rakah_sequence.json"
+SEQUENCE_PATH = os.path.join(os.path.dirname(__file__), "two_rakah", "two_rakah_sequence.json")
 IMAGES_DIR = "/content/fadl_ai/prayer/two_rakah/images"
 TEMP_AUDIO_DIR = "/content/fadl_ai/prayer/audio/temp"
 

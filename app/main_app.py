@@ -2,18 +2,24 @@
 import sys
 import gradio as gr
 
-QURAN_CODE_DIR = "/content/fadl_ai/quran/code"
-PRAYER_DIR = "/content/fadl_ai/prayer"
-WUDU_DIR = "/content/fadl_ai/wudu/code"
-IMAGE_TO_VIDEO_DIR = "/content/fadl_ai/image_to_video/code"
-TEXT_TO_VIDEO_DIR = "/content/fadl_ai/text_to_video/code"
+import os
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+QURAN_CODE_DIR = os.path.join(BASE_DIR, "quran", "code")
+PRAYER_DIR = os.path.join(BASE_DIR, "prayer")
+WUDU_DIR = os.path.join(BASE_DIR, "wudu", "code")
+IMAGE_TO_VIDEO_DIR = os.path.join(BASE_DIR, "image_to_video", "code")
+TEXT_TO_VIDEO_DIR = os.path.join(BASE_DIR, "text_to_video", "code")
+VIDEO_ENGINE_DIR = os.path.join(BASE_DIR, "video_engine")
 
 for path in [
     QURAN_CODE_DIR,
     PRAYER_DIR,
     WUDU_DIR,
     IMAGE_TO_VIDEO_DIR,
-    TEXT_TO_VIDEO_DIR
+    TEXT_TO_VIDEO_DIR,
+    VIDEO_ENGINE_DIR
 ]:
     if path not in sys.path:
         sys.path.insert(0, path)
