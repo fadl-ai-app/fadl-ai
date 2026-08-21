@@ -79,7 +79,6 @@ def prepare_surah(choice):
 
     lines = [
         f'سورة {surah["name"]}',
-        f'عدد الآيات: {surah["ayah_count"]}',
         ""
     ]
 
@@ -88,44 +87,37 @@ def prepare_surah(choice):
             f'{ayah["ayah"]} - {ayah["text"]}'
         )
 
-    print(f"[QURAN] طلب تشغيل السورة: {surah_number}")
-    print("[QURAN] QF_CLIENT_ID موجود:", bool(os.environ.get("QF_CLIENT_ID")))
-    print("[QURAN] QF_CLIENT_SECRET موجود:", bool(os.environ.get("QF_CLIENT_SECRET")))
+    print(f"[QURAN] طلب السورة: {surah_number}")
 
-    try:
-        audio_path = quran_engine.get_surah_audio(
-            surah_number
-        )
+    audio_url = quran_engine.get_surah_audio(
+        surah_number
+    )
 
-        print("[QURAN] audio_path:", audio_path)
+    if isinstance(audio_url, str) and audio_url.startswith(("http://", "https://")):
+        print("[QURAN] ✅ رابط الحصري جاهز:", audio_url)
 
-        # إذا رجع المحرك رابطًا مباشرًا، ننزله مؤقتًا للـ Gradio
-        if isinstance(audio_path, str) and audio_path.startswith(("http://", "https://")):
-            print("[QURAN] ✅ استلمنا رابط الصوت المباشر")
+        audio_html = f"""
+        <div style="width:100%; direction:rtl;">
+            <audio
+                controls
+                preload="metadata"
+                style="width:100%;"
+                src="{audio_url}">
+            </audio>
+            <div style="margin-top:6px; font-size:14px;">
+                التلاوة بصوت الشيخ محمود خليل الحصري
+            </div>
+        </div>
+        """
 
-            local_audio = cache_remote_audio(
-                audio_path,
-                surah_number
-            )
+        return "\n".join(lines), audio_html
 
-            if local_audio:
-                return "\n".join(lines), local_audio
+    print("[QURAN] ❌ لم يصل رابط صوت صالح")
 
-            print("[QURAN] ❌ تعذر تجهيز الصوت المحلي")
-            return "\n".join(lines), None
-
-        # توافق مع النظام القديم إذا أعاد ملفًا محليًا
-        if audio_path and os.path.exists(audio_path):
-            print("[QURAN] ✅ ملف صوت محلي")
-            print("[QURAN] الحجم:", os.path.getsize(audio_path))
-            return "\n".join(lines), audio_path
-
-        print("[QURAN] ❌ لا يوجد صوت صالح")
-        return "\n".join(lines), None
-
-    except Exception as e:
-        print("[QURAN] ❌ خطأ:", type(e).__name__, str(e))
-        raise
+    return (
+        "\n".join(lines),
+        "<div>تعذر تحميل التلاوة.</div>"
+    )
 
 
 def create_quran_ui():

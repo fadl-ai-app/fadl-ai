@@ -363,10 +363,8 @@ def create_main_app():
                     interactive=False
                 )
 
-                quran_audio = gr.Audio(
-                    label="التلاوة",
-                    type="filepath",
-                    autoplay=True
+                quran_audio = gr.HTML(
+                    value="<div>اختر السورة ثم اضغط تشغيل التلاوة</div>"
                 )
 
                 quran_button.click(
