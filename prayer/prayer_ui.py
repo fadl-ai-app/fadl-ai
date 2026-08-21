@@ -21,17 +21,36 @@ with open(SEQUENCE_PATH, "r", encoding="utf-8") as f:
     prayer_sequence = json.load(f)
 
 
+
+def resolve_prayer_path(value):
+    if not value:
+        return None
+
+    value = str(value)
+
+    # المسارات النسبية داخل مجلد prayer
+    if not os.path.isabs(value):
+        return os.path.join(BASE_DIR, value)
+
+    # توافق احتياطي مع المسارات القديمة
+    if "/prayer/" in value:
+        relative = value.split("/prayer/", 1)[1]
+        return os.path.join(BASE_DIR, relative)
+
+    return value
+
+
 def get_step_audio(item):
 
     if item.get("quran_audio"):
-        return item["quran_audio"]
+        return resolve_prayer_path(item["quran_audio"])
 
     if item.get("audio"):
-        return item["audio"]
+        return resolve_prayer_path(item["audio"])
 
     if item.get("audio_1") and item.get("audio_2"):
-        audio1 = AudioSegment.from_file(item["audio_1"])
-        audio2 = AudioSegment.from_file(item["audio_2"])
+        audio1 = AudioSegment.from_file(resolve_prayer_path(item["audio_1"]))
+        audio2 = AudioSegment.from_file(resolve_prayer_path(item["audio_2"]))
 
         pause = AudioSegment.silent(duration=400)
         combined = audio1 + pause + audio2
@@ -73,7 +92,7 @@ def render_step(index):
 
     audio_path = get_step_audio(item)
 
-    video_path = item.get("video")
+    video_path = resolve_prayer_path(item.get("video"))
 
     if video_path and os.path.exists(video_path):
         # إذا وُجد فيديو جاهز، نعرضه بدل الصورة والصوت المنفصل
