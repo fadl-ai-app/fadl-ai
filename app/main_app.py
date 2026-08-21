@@ -6,6 +6,10 @@ import os
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
+# يسمح بالاستيراد مثل: from video_engine...
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 QURAN_CODE_DIR = os.path.join(BASE_DIR, "quran", "code")
 PRAYER_DIR = os.path.join(BASE_DIR, "prayer")
 WUDU_DIR = os.path.join(BASE_DIR, "wudu", "code")
