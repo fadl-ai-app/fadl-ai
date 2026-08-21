@@ -26,3 +26,10 @@ __pycache__/
 
 # Logs
 *.log
+
+
+# Allow prayer media required by the web app
+!prayer/**/*.mp4
+!prayer/**/*.mp3
+!prayer/**/*.ogg
+!prayer/**/*.wav
