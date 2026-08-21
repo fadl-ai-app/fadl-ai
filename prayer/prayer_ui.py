@@ -5,8 +5,15 @@ import os
 from pydub import AudioSegment
 
 SEQUENCE_PATH = os.path.join(os.path.dirname(__file__), "two_rakah", "two_rakah_sequence.json")
-IMAGES_DIR = "/content/fadl_ai/prayer/two_rakah/images"
-TEMP_AUDIO_DIR = "/content/fadl_ai/prayer/audio/temp"
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+IMAGES_DIR = os.path.join(
+    BASE_DIR, "two_rakah", "images"
+)
+
+TEMP_AUDIO_DIR = os.path.join(
+    BASE_DIR, "audio", "temp"
+)
 
 os.makedirs(TEMP_AUDIO_DIR, exist_ok=True)
 
