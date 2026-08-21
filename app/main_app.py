@@ -472,5 +472,8 @@ if __name__ == "__main__":
         share=False,
         server_name="0.0.0.0",
         server_port=int(os.environ.get("PORT", "7860")),
-        allowed_paths=[project_root]
+        allowed_paths=[
+            project_root,
+            "/tmp/fadl_quran_audio"
+        ]
     )
