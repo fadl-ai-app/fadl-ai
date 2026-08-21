@@ -40,11 +40,28 @@ def prepare_surah(choice):
             f'{ayah["ayah"]} - {ayah["text"]}'
         )
 
-    audio_path = quran_engine.get_surah_audio(
-        surah_number
-    )
+    print(f"[QURAN] طلب تشغيل السورة: {surah_number}")
+    print("[QURAN] QF_CLIENT_ID موجود:", bool(os.environ.get("QF_CLIENT_ID")))
+    print("[QURAN] QF_CLIENT_SECRET موجود:", bool(os.environ.get("QF_CLIENT_SECRET")))
 
-    return "\n".join(lines), audio_path
+    try:
+        audio_path = quran_engine.get_surah_audio(
+            surah_number
+        )
+
+        print("[QURAN] audio_path:", audio_path)
+
+        if audio_path and os.path.exists(audio_path):
+            print("[QURAN] الملف موجود:", True)
+            print("[QURAN] الحجم:", os.path.getsize(audio_path))
+            return "\n".join(lines), audio_path
+
+        print("[QURAN] ❌ لم يتم إنشاء ملف صوت")
+        return "\n".join(lines), None
+
+    except Exception as e:
+        print("[QURAN] ❌ خطأ:", type(e).__name__, str(e))
+        raise
 
 
 def create_quran_ui():
