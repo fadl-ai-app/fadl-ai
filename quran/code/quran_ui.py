@@ -1,16 +1,20 @@
-
+import os
 import gradio as gr
 import json
 import quran_engine
 
-DB_PATH = "/content/fadl_ai/quran/quran_database.json"
+BASE_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..")
+)
+DB_PATH = os.path.join(
+    BASE_DIR, "quran", "quran_database.json"
+)
 
 with open(DB_PATH, "r", encoding="utf-8") as f:
     quran_db = json.load(f)
 
 # ربط قاعدة القرآن بالمحرك.
 # المفاتيح تُحمّل لاحقًا من البيئة/Colab Secrets ولا تُحفظ في الملف.
-import os
 
 _qf_client_id = os.environ.get("QF_CLIENT_ID")
 _qf_client_secret = os.environ.get("QF_CLIENT_SECRET")

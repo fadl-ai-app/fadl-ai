@@ -1,4 +1,3 @@
-import os
 
 import sys
 import gradio as gr
@@ -455,10 +454,8 @@ if __name__ == "__main__":
     app = create_main_app()
     app.launch(
     css=app.fadl_welcome_css,
-    share=False,
-    server_name="0.0.0.0",
-    server_port=int(os.environ.get("PORT", "7860")),
+    share=True,
     allowed_paths=[
-        os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        "/content/fadl_ai"
     ]
 )
