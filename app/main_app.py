@@ -462,10 +462,15 @@ def create_main_app():
 
 if __name__ == "__main__":
     app = create_main_app()
+
+    project_root = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..")
+    )
+
     app.launch(
-    css=app.fadl_welcome_css,
-    share=True,
-    allowed_paths=[
-        "/content/fadl_ai"
-    ]
-)
+        css=app.fadl_welcome_css,
+        share=False,
+        server_name="0.0.0.0",
+        server_port=int(os.environ.get("PORT", "7860")),
+        allowed_paths=[project_root]
+    )
