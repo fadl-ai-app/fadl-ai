@@ -33,3 +33,9 @@ __pycache__/
 !prayer/**/*.mp3
 !prayer/**/*.ogg
 !prayer/**/*.wav
+
+
+# Allow complete Quran surah cache files
+!quran/audio/
+!quran/audio/**/
+!quran/audio/**/surah_*_complete.mp3
