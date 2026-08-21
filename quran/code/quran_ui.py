@@ -31,7 +31,6 @@ def prepare_surah(choice):
 
     lines = [
         f'سورة {surah["name"]}',
-        f'عدد الآيات: {surah["ayah_count"]}',
         ""
     ]
 
@@ -40,11 +39,18 @@ def prepare_surah(choice):
             f'{ayah["ayah"]} - {ayah["text"]}'
         )
 
-    audio_path = quran_engine.get_surah_audio(
-        surah_number
+    # محمود خليل الحصري - تلاوة مرتلة
+    audio_url = (
+        "https://download.quranicaudio.com/"
+        f"qdc/khalil_al_husary/murattal/{surah_number}.mp3"
     )
 
-    return "\n".join(lines), audio_path
+    print(
+        f"[QURAN] سورة {surah_number:03d} "
+        "جاهزة بصوت محمود خليل الحصري"
+    )
+
+    return "\n".join(lines), audio_url
 
 
 def create_quran_ui():
