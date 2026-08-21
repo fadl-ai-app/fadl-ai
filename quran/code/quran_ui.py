@@ -51,12 +51,18 @@ def prepare_surah(choice):
 
         print("[QURAN] audio_path:", audio_path)
 
+        # النظام الجديد قد يعيد رابط HTTPS مباشر بدل ملف محلي
+        if isinstance(audio_path, str) and audio_path.startswith(("http://", "https://")):
+            print("[QURAN] ✅ رابط صوت مباشر")
+            return "\n".join(lines), audio_path
+
+        # توافق مع النظام القديم إذا أعاد ملفًا محليًا
         if audio_path and os.path.exists(audio_path):
-            print("[QURAN] الملف موجود:", True)
+            print("[QURAN] ✅ ملف صوت محلي")
             print("[QURAN] الحجم:", os.path.getsize(audio_path))
             return "\n".join(lines), audio_path
 
-        print("[QURAN] ❌ لم يتم إنشاء ملف صوت")
+        print("[QURAN] ❌ لا يوجد صوت صالح")
         return "\n".join(lines), None
 
     except Exception as e:
