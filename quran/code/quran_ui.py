@@ -1,3 +1,5 @@
+from pathlib import Path
+import requests
 import os
 import gradio as gr
 import json
@@ -25,6 +27,52 @@ quran_engine.configure(
     quran_db
 )
 
+
+QURAN_WEB_CACHE = Path("/tmp/fadl_quran_audio")
+QURAN_WEB_CACHE.mkdir(parents=True, exist_ok=True)
+
+
+def cache_remote_audio(audio_url, surah_number):
+    """
+    ينزل السورة المطلوبة فقط إلى /tmp باستخدام streaming.
+    لا يستخدم pydub ولا يحمل الملف كاملًا في الذاكرة.
+    """
+    output = QURAN_WEB_CACHE / f"surah_{int(surah_number):03d}.mp3"
+
+    if output.exists() and output.stat().st_size > 0:
+        print("[QURAN] ✅ الصوت موجود في cache:", output)
+        return str(output)
+
+    print("[QURAN] جاري تنزيل السورة مؤقتًا...")
+
+    with requests.get(
+        audio_url,
+        stream=True,
+        timeout=(20, 300)
+    ) as response:
+
+        response.raise_for_status()
+
+        with open(output, "wb") as f:
+            for chunk in response.iter_content(
+                chunk_size=1024 * 1024
+            ):
+                if chunk:
+                    f.write(chunk)
+
+    if output.exists() and output.stat().st_size > 0:
+        print(
+            "[QURAN] ✅ تم تنزيل الصوت المؤقت:",
+            output,
+            "الحجم:",
+            output.stat().st_size
+        )
+        return str(output)
+
+    print("[QURAN] ❌ فشل إنشاء الملف المؤقت")
+    return None
+
+
 def prepare_surah(choice):
     surah_number = int(choice.split(" - ")[0])
     surah = quran_db[str(surah_number)]
@@ -51,10 +99,20 @@ def prepare_surah(choice):
 
         print("[QURAN] audio_path:", audio_path)
 
-        # النظام الجديد قد يعيد رابط HTTPS مباشر بدل ملف محلي
+        # إذا رجع المحرك رابطًا مباشرًا، ننزله مؤقتًا للـ Gradio
         if isinstance(audio_path, str) and audio_path.startswith(("http://", "https://")):
-            print("[QURAN] ✅ رابط صوت مباشر")
-            return "\n".join(lines), audio_path
+            print("[QURAN] ✅ استلمنا رابط الصوت المباشر")
+
+            local_audio = cache_remote_audio(
+                audio_path,
+                surah_number
+            )
+
+            if local_audio:
+                return "\n".join(lines), local_audio
+
+            print("[QURAN] ❌ تعذر تجهيز الصوت المحلي")
+            return "\n".join(lines), None
 
         # توافق مع النظام القديم إذا أعاد ملفًا محليًا
         if audio_path and os.path.exists(audio_path):
