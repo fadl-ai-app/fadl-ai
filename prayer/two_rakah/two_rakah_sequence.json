@@ -17,7 +17,7 @@
     "order": 3,
     "action": "القراءة",
     "image": "03_reading.jpeg",
-    "quran_audio": "audio/fatiha_plus_112.mp3",
+    "quran_audio": "audio/fatiha_plus_ikhlas_fixed.mp3",
     "fatiha_required": true,
     "after_fatiha_surah": {
       "number": 112,
@@ -79,7 +79,7 @@
     "order": 10,
     "action": "القراءة",
     "image": "03_reading.jpeg",
-    "quran_audio": "audio/fatiha_plus_112.mp3",
+    "quran_audio": "audio/fatiha_plus_ikhlas_fixed.mp3",
     "fatiha_required": true,
     "after_fatiha_surah": {
       "number": 112,
