@@ -6,7 +6,7 @@ import uuid
 import json
 import sys
 
-VIDEO_ENGINE_DIR = "/content/fadl_ai/video_engine"
+VIDEO_ENGINE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "video_engine"))
 
 if VIDEO_ENGINE_DIR not in sys.path:
     sys.path.insert(0, VIDEO_ENGINE_DIR)
@@ -732,7 +732,7 @@ def confirm_image_generation(confirmation_json):
     )
 
     jobs_file = Path(
-        "/content/fadl_ai/video_engine/jobs.json"
+        os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")), "video_engine", "jobs.json")
     )
 
     try:

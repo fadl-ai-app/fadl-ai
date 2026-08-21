@@ -1,3 +1,4 @@
+from pathlib import Path
 
 import os
 import requests
@@ -70,7 +71,7 @@ def get_surah_audio(surah_number, reciter_id=6, force_rebuild=False):
     ]
 
     audio_dir = (
-        f"/content/fadl_ai/quran/audio/"
+        str(Path(__file__).resolve().parents[1] / "audio") + "/"
         f"surah_{surah_number:03d}"
     )
 
@@ -198,7 +199,7 @@ def get_surah_audio(surah_number, reciter_id=6, force_rebuild=False):
 
     if surah_number not in (1, 9):
         bismillah_file = (
-            "/content/fadl_ai/quran/audio/"
+            str(Path(__file__).resolve().parents[1] / "audio") + "/"
             "al_fatiha/001_001.mp3"
         )
 

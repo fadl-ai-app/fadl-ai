@@ -8,14 +8,14 @@ import sys
 from google.colab import userdata
 from pathlib import Path
 
-VALIDATOR_DIR = "/content/fadl_ai/video_engine"
+VALIDATOR_DIR = str(Path(__file__).resolve().parents[1])
 
 if VALIDATOR_DIR not in sys.path:
     sys.path.insert(0, VALIDATOR_DIR)
 
 import request_validator
 
-BASE = Path("/content/fadl_ai")
+BASE = Path(__file__).resolve().parents[2]
 JOBS_FILE = BASE / "video_engine" / "jobs.json"
 
 SENT_JOBS_FILE = BASE / "video_engine" / "runway_sent_jobs.json"

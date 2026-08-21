@@ -387,13 +387,13 @@ def create_main_app():
 
                 gr.Markdown("### الأذان")
                 gr.Video(
-                    value="/content/fadl_ai/prayer/adhan/adhan.mp4",
+                    value=os.path.join(BASE_DIR, "prayer", "adhan", "adhan.mp4"),
                     label="فيديو الأذان"
                 )
 
                 gr.Markdown("### الإقامة")
                 gr.Video(
-                    value="/content/fadl_ai/prayer/iqama/sadtalker_result/2026_08_18_04.48.33.mp4",
+                    value=os.path.join(BASE_DIR, "prayer", "iqama", "sadtalker_result", "2026_08_18_04.48.33.mp4"),
                     label="فيديو الإقامة"
                 )
 

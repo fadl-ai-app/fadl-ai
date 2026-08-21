@@ -1,9 +1,10 @@
+from pathlib import Path
 
 import os
 import json
 import requests
 
-VOICE_ROUTER = "/content/fadl_ai/image_to_video/config/voice_router.json"
+VOICE_ROUTER = str(Path(__file__).resolve().parents[1] / "image_to_video" / "config" / "voice_router.json")
 
 def get_voice(voice_type):
     with open(VOICE_ROUTER, "r", encoding="utf-8") as f:

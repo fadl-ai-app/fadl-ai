@@ -62,7 +62,7 @@ def check_pipeline(job_id):
 
     # 3) تسجيل المهمة إن لم تكن مسجلة
     request_file = str(
-        Path("/content/fadl_ai/image_to_video")
+        (Path(__file__).resolve().parents[1] / "image_to_video")
         / f"{job_id}_request.json"
     )
 

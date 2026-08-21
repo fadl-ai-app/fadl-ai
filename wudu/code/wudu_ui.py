@@ -4,7 +4,7 @@ import json
 import os
 
 STEPS_PATH = os.path.join(os.path.dirname(__file__), "..", "config", "wudu_steps.json")
-IMAGES_DIR = "/content/fadl_ai/wudu/images"
+IMAGES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "images"))
 
 with open(STEPS_PATH, "r", encoding="utf-8") as f:
     wudu_steps = json.load(f)

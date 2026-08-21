@@ -5,7 +5,7 @@ import shutil
 
 FADL_WATERMARK_VERSION = "1.0"
 
-BASE = Path("/content/fadl_ai")
+BASE = Path(__file__).resolve().parents[1]
 
 DEFAULT_ICON = (
     BASE / "app/assets/fadl_ai_icon.png"
