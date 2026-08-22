@@ -663,7 +663,7 @@ def prepare_paid_generation(
     )
 
 
-def confirm_and_generate_video(confirmation_json):
+def _confirm_and_generate_video_impl(confirmation_json):
 
     import time
     import requests
@@ -961,3 +961,33 @@ def confirm_and_generate_video(confirmation_json):
         ""
     )
 
+
+
+# =========================================================
+# RENDER GENERATION ERROR DIAGNOSTICS
+# =========================================================
+def confirm_and_generate_video(confirmation_json):
+    try:
+        return _confirm_and_generate_video_impl(
+            confirmation_json
+        )
+
+    except Exception as e:
+        import traceback
+
+        print("\n" + "=" * 70)
+        print("[FADL GENERATION ERROR]")
+        print("Type:", type(e).__name__)
+        print("Message:", str(e))
+        print("--- TRACEBACK ---")
+        traceback.print_exc()
+        print("=" * 70 + "\n")
+
+        return (
+            "✗ فشل التوليد\n"
+            f"نوع الخطأ: {type(e).__name__}\n"
+            f"السبب: {str(e)}",
+            None,
+            None,
+            ""
+        )
