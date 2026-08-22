@@ -652,7 +652,7 @@ def preview_image_video_cost(job_id):
     )
 
 
-def confirm_image_generation(confirmation_json):
+def _confirm_image_generation_impl(confirmation_json):
 
     import importlib
     import time
@@ -955,3 +955,33 @@ def confirm_image_generation(confirmation_json):
         ""
     )
 
+
+
+# =========================================================
+# IMAGE TO VIDEO - RENDER ERROR DIAGNOSTICS
+# =========================================================
+def confirm_image_generation(confirmation_json):
+    try:
+        return _confirm_image_generation_impl(
+            confirmation_json
+        )
+
+    except Exception as e:
+        import traceback
+
+        print("\n" + "=" * 70)
+        print("[FADL IMAGE GENERATION ERROR]")
+        print("Type:", type(e).__name__)
+        print("Message:", str(e))
+        print("--- TRACEBACK ---")
+        traceback.print_exc()
+        print("=" * 70 + "\n")
+
+        return (
+            "✗ فشل توليد صورة → فيديو\n"
+            f"نوع الخطأ: {type(e).__name__}\n"
+            f"السبب: {str(e)}",
+            None,
+            None,
+            ""
+        )
