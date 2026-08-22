@@ -114,7 +114,12 @@ invented dialogue.
 sys.path.insert(0, "/content/fadl_ai")
 from video_engine.elevenlabs_tts import generate_speech
 
-BASE = "/content/fadl_ai/text_to_video"
+BASE = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        ".."
+    )
+)
 REQUESTS_DIR = f"{BASE}/requests"
 OUTPUTS_DIR = f"{BASE}/outputs"
 AUDIO_DIR = f"{BASE}/audio"
@@ -765,7 +770,17 @@ def confirm_and_generate_video(confirmation_json):
 
     # تسجيل المهمة في jobs.json
     jobs_file = Path(
-        "/content/fadl_ai/video_engine/jobs.json"
+        os.path.join(
+            os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "..",
+                    ".."
+                )
+            ),
+            "video_engine",
+            "jobs.json"
+        )
     )
 
     try:

@@ -1,12 +1,16 @@
+from pathlib import Path
 
 import gradio as gr
 import json
 import os
 from pydub import AudioSegment
 
-SEQUENCE_PATH = "/content/fadl_ai/prayer/two_rakah/two_rakah_sequence.json"
-IMAGES_DIR = "/content/fadl_ai/prayer/two_rakah/images"
-TEMP_AUDIO_DIR = "/content/fadl_ai/prayer/audio/temp"
+PRAYER_ROOT = Path(__file__).resolve().parent
+
+
+SEQUENCE_PATH = str(PRAYER_ROOT / 'two_rakah' / 'two_rakah_sequence.json')
+IMAGES_DIR = str(PRAYER_ROOT / 'two_rakah' / 'images')
+TEMP_AUDIO_DIR = str(PRAYER_ROOT / 'audio' / 'temp')
 
 os.makedirs(TEMP_AUDIO_DIR, exist_ok=True)
 

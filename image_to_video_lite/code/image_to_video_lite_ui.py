@@ -466,3 +466,82 @@ def create_image_to_video_lite_ui():
         )
 
     return app
+
+
+# =========================================================
+# EMBED INSIDE FADL AI MAIN APP
+# =========================================================
+
+def add_image_to_video_ui():
+
+    gr.Markdown(
+        "## صورة → فيديو"
+    )
+
+    image_input = gr.Image(
+        type="filepath",
+        label="ارفع صورة"
+    )
+
+    motion_input = gr.Textbox(
+        label="وصف الحركة",
+        placeholder=(
+            "مثال: الرجل ينظر للكاميرا "
+            "ويحرك رأسه بهدوء"
+        )
+    )
+
+    prepare_button = gr.Button(
+        "معاينة التكلفة"
+    )
+
+    cost_preview = gr.Textbox(
+        label="معاينة التكلفة",
+        lines=7,
+        interactive=False
+    )
+
+    confirmation_data = gr.Textbox(
+        visible=False
+    )
+
+    confirm_button = gr.Button(
+        "✅ تأكيد التوليد"
+    )
+
+    status = gr.Textbox(
+        label="حالة التوليد",
+        lines=8,
+        interactive=False
+    )
+
+    final_video = gr.Video(
+        label="الفيديو النهائي"
+    )
+
+    download_video = gr.File(
+        label="تحميل الفيديو"
+    )
+
+    prepare_button.click(
+        fn=prepare_image_video,
+        inputs=[
+            image_input,
+            motion_input
+        ],
+        outputs=[
+            cost_preview,
+            confirmation_data
+        ]
+    )
+
+    confirm_button.click(
+        fn=confirm_image_video,
+        inputs=confirmation_data,
+        outputs=[
+            status,
+            final_video,
+            download_video,
+            confirmation_data
+        ]
+    )

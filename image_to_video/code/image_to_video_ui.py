@@ -1,4 +1,5 @@
 
+from pathlib import Path
 import gradio as gr
 import os
 import shutil
@@ -6,14 +7,18 @@ import uuid
 import json
 import sys
 
-VIDEO_ENGINE_DIR = "/content/fadl_ai/video_engine"
+VIDEO_ENGINE_DIR = str(
+    Path(__file__).resolve().parents[2] / "video_engine"
+)
 
 if VIDEO_ENGINE_DIR not in sys.path:
     sys.path.insert(0, VIDEO_ENGINE_DIR)
 
 import full_pipeline
 
-BASE = "/content/fadl_ai/image_to_video"
+BASE = str(
+    Path(__file__).resolve().parents[1]
+)
 IMAGE_DIR = f"{BASE}/input_images"
 AUDIO_DIR = f"{BASE}/input_audio"
 CONFIG_PATH = f"{BASE}/config/motion_config.json"
@@ -655,7 +660,6 @@ def confirm_image_generation(confirmation_json):
     import importlib
     import time
     import requests
-    from pathlib import Path
 
     # 4 outputs:
     # status, video, download, confirmation_data
@@ -730,7 +734,11 @@ def confirm_image_generation(confirmation_json):
     )
 
     jobs_file = Path(
-        "/content/fadl_ai/video_engine/jobs.json"
+        str(
+            Path(__file__).resolve().parents[2]
+            / "video_engine"
+            / "jobs.json"
+        )
     )
 
     try:

@@ -1,9 +1,13 @@
+from pathlib import Path
 
 import gradio as gr
 import json
 import quran_engine
 
-DB_PATH = "/content/fadl_ai/quran/quran_database.json"
+DB_PATH = str(
+    Path(__file__).resolve().parents[1]
+    / "quran_database.json"
+)
 
 with open(DB_PATH, "r", encoding="utf-8") as f:
     quran_db = json.load(f)

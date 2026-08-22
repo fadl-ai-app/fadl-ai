@@ -1,18 +1,74 @@
+import os
 
 import sys
 import gradio as gr
 
-QURAN_CODE_DIR = "/content/fadl_ai/quran/code"
-PRAYER_DIR = "/content/fadl_ai/prayer"
-WUDU_DIR = "/content/fadl_ai/wudu/code"
-IMAGE_TO_VIDEO_DIR = "/content/fadl_ai/image_to_video/code"
-TEXT_TO_VIDEO_DIR = "/content/fadl_ai/text_to_video/code"
+# FADL AI PROJECT ROOT
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        ".."
+    )
+)
+
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+
+QURAN_CODE_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "quran",
+        "code"
+    )
+)
+PRAYER_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "prayer"
+    )
+)
+WUDU_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "wudu",
+        "code"
+    )
+)
+IMAGE_TO_VIDEO_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "image_to_video",
+        "code"
+    )
+)
+IMAGE_TO_VIDEO_LITE_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "image_to_video_lite",
+        "code"
+    )
+)
+TEXT_TO_VIDEO_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "text_to_video",
+        "code"
+    )
+)
 
 for path in [
     QURAN_CODE_DIR,
     PRAYER_DIR,
     WUDU_DIR,
     IMAGE_TO_VIDEO_DIR,
+    IMAGE_TO_VIDEO_LITE_DIR,
     TEXT_TO_VIDEO_DIR
 ]:
     if path not in sys.path:
@@ -22,6 +78,7 @@ import quran_ui
 import prayer_ui
 import wudu_ui
 import image_to_video_ui
+import image_to_video_lite_ui
 import text_to_video_ui
 
 
@@ -211,6 +268,17 @@ def create_main_app():
 
     @keyframes fadlFadeOut {
         from {
+
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        ".."
+    )
+)
+
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
             opacity: 1;
             visibility: visible;
         }
@@ -377,13 +445,22 @@ def create_main_app():
 
                 gr.Markdown("### الأذان")
                 gr.Video(
-                    value="/content/fadl_ai/prayer/adhan/adhan.mp4",
+                    value=os.path.join(
+                        PRAYER_DIR,
+                        "adhan",
+                        "adhan.mp4"
+                    ),
                     label="فيديو الأذان"
                 )
 
                 gr.Markdown("### الإقامة")
                 gr.Video(
-                    value="/content/fadl_ai/prayer/iqama/sadtalker_result/2026_08_18_04.48.33.mp4",
+                    value=os.path.join(
+                        PRAYER_DIR,
+                        "iqama",
+                        "sadtalker_result",
+                        "2026_08_18_04.48.33.mp4"
+                    ),
                     label="فيديو الإقامة"
                 )
 
@@ -440,7 +517,7 @@ def create_main_app():
 
             # صورة إلى فيديو
             with gr.Tab("صورة إلى فيديو"):
-                image_to_video_ui.add_image_to_video_ui()
+                image_to_video_lite_ui.add_image_to_video_ui()
 
             # نص إلى فيديو
             with gr.Tab("نص إلى فيديو"):

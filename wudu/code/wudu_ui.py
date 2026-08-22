@@ -1,10 +1,14 @@
+from pathlib import Path
 
 import gradio as gr
 import json
 import os
 
-STEPS_PATH = "/content/fadl_ai/wudu/config/wudu_steps.json"
-IMAGES_DIR = "/content/fadl_ai/wudu/images"
+WUDU_ROOT = Path(__file__).resolve().parents[1]
+
+
+STEPS_PATH = str(WUDU_ROOT / 'config' / 'wudu_steps.json')
+IMAGES_DIR = str(WUDU_ROOT / 'images')
 
 with open(STEPS_PATH, "r", encoding="utf-8") as f:
     wudu_steps = json.load(f)
