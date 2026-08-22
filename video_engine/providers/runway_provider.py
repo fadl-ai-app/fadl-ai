@@ -5,7 +5,10 @@ import mimetypes
 import re
 import requests
 import sys
-from google.colab import userdata
+try:
+    from google.colab import userdata
+except ImportError:
+    userdata = None
 from pathlib import Path
 
 VALIDATOR_DIR = str(Path(__file__).resolve().parents[1])
