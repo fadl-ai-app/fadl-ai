@@ -688,8 +688,8 @@ def fadl_check_content_safety(request_data):
 # يسمح بتصفح واستخدام الأقسام المحلية،
 # لكنه يمنع أي توليد مدفوع حتى نفتحه نحن صراحة.
 
-FADL_WEB_TRIAL_MODE = True
-FADL_WEB_PAID_GENERATION_ENABLED = False
+FADL_WEB_TRIAL_MODE = False
+FADL_WEB_PAID_GENERATION_ENABLED = True
 
 
 def fadl_web_trial_allows_paid_generation():
