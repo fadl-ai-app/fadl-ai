@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from providers import sadtalker_provider
 
-BASE = Path(__file__).resolve().parents[1]
+BASE = Path("/content/fadl_ai")
 
 
 def load_request(job_id):

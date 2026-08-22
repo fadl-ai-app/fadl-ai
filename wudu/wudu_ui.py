@@ -2,8 +2,8 @@
 import gradio as gr
 import json
 
-SEQUENCE_PATH = os.path.join(os.path.dirname(__file__), "wudu_sequence.json")
-IMAGES_DIR = os.path.join(os.path.dirname(__file__), "images")
+SEQUENCE_PATH = "/content/fadl_ai/wudu/wudu_sequence.json"
+IMAGES_DIR = "/content/fadl_ai/wudu/images"
 
 with open(SEQUENCE_PATH, "r", encoding="utf-8") as f:
     wudu_sequence = json.load(f)

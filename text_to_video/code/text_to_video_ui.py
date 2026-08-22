@@ -111,16 +111,10 @@ invented dialogue.
 """.strip()
 
 
-PROJECT_ROOT = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..")
-)
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+sys.path.insert(0, "/content/fadl_ai")
 from video_engine.elevenlabs_tts import generate_speech
 
-BASE = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
-)
+BASE = "/content/fadl_ai/text_to_video"
 REQUESTS_DIR = f"{BASE}/requests"
 OUTPUTS_DIR = f"{BASE}/outputs"
 AUDIO_DIR = f"{BASE}/audio"
@@ -663,7 +657,7 @@ def prepare_paid_generation(
     )
 
 
-def _confirm_and_generate_video_impl(confirmation_json):
+def confirm_and_generate_video(confirmation_json):
 
     import time
     import requests
@@ -771,7 +765,7 @@ def _confirm_and_generate_video_impl(confirmation_json):
 
     # تسجيل المهمة في jobs.json
     jobs_file = Path(
-        os.path.join(PROJECT_ROOT, "video_engine", "jobs.json")
+        "/content/fadl_ai/video_engine/jobs.json"
     )
 
     try:
@@ -858,12 +852,12 @@ def _confirm_and_generate_video_impl(confirmation_json):
     )
 
     # متابعة نفس المهمة فقط
-    for attempt in range(48):
+    for _ in range(120):
 
         r = requests.get(
             task_url,
             headers=headers,
-            timeout=15
+            timeout=30
         )
 
         if r.status_code != 200:
@@ -876,11 +870,6 @@ def _confirm_and_generate_video_impl(confirmation_json):
 
         task = r.json()
         task_status = task.get("status")
-
-        print(
-            f"[RUNWAY FOLLOW] محاولة {attempt + 1}/48 "
-            f"— الحالة: {task_status}"
-        )
 
         if task_status == "SUCCEEDED":
 
@@ -960,40 +949,9 @@ def _confirm_and_generate_video_impl(confirmation_json):
         time.sleep(5)
 
     return (
-        "⏳ الفيديو ما زال قيد التوليد في Runway. "
-        "لم يتم إرسال مهمة ثانية ولم يتم تكرار الخصم.",
+        "⏳ المهمة ما زالت تعمل. لم يتم إرسال مهمة أخرى.",
         None,
         None,
         ""
     )
 
-
-
-# =========================================================
-# RENDER GENERATION ERROR DIAGNOSTICS
-# =========================================================
-def confirm_and_generate_video(confirmation_json):
-    try:
-        return _confirm_and_generate_video_impl(
-            confirmation_json
-        )
-
-    except Exception as e:
-        import traceback
-
-        print("\n" + "=" * 70)
-        print("[FADL GENERATION ERROR]")
-        print("Type:", type(e).__name__)
-        print("Message:", str(e))
-        print("--- TRACEBACK ---")
-        traceback.print_exc()
-        print("=" * 70 + "\n")
-
-        return (
-            "✗ فشل التوليد\n"
-            f"نوع الخطأ: {type(e).__name__}\n"
-            f"السبب: {str(e)}",
-            None,
-            None,
-            ""
-        )

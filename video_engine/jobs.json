@@ -70,5 +70,23 @@
     "type": "image_to_video",
     "request_file": "/content/fadl_ai/image_to_video/4b5deece_request.json",
     "status": "prepared"
+  },
+  {
+    "job_id": "470235dc",
+    "type": "image_to_video",
+    "request_file": "/content/fadl_ai_latest/image_to_video_lite/470235dc_request.json",
+    "status": "prepared"
+  },
+  {
+    "job_id": "36d2a0a2",
+    "type": "image_to_video",
+    "request_file": "/content/fadl_ai_latest/image_to_video_lite/36d2a0a2_request.json",
+    "status": "prepared"
+  },
+  {
+    "job_id": "784b5ff8",
+    "type": "image_to_video",
+    "request_file": "/content/fadl_ai_latest/image_to_video_lite/784b5ff8_request.json",
+    "status": "prepared"
   }
 ]

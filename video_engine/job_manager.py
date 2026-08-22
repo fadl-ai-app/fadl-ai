@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-BASE = Path(__file__).resolve().parents[1]
+BASE = Path("/content/fadl_ai")
 JOBS_FILE = BASE / "video_engine" / "jobs.json"
 
 

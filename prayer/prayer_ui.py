@@ -4,16 +4,9 @@ import json
 import os
 from pydub import AudioSegment
 
-SEQUENCE_PATH = os.path.join(os.path.dirname(__file__), "two_rakah", "two_rakah_sequence.json")
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-
-IMAGES_DIR = os.path.join(
-    BASE_DIR, "two_rakah", "images"
-)
-
-TEMP_AUDIO_DIR = os.path.join(
-    BASE_DIR, "audio", "temp"
-)
+SEQUENCE_PATH = "/content/fadl_ai/prayer/two_rakah/two_rakah_sequence.json"
+IMAGES_DIR = "/content/fadl_ai/prayer/two_rakah/images"
+TEMP_AUDIO_DIR = "/content/fadl_ai/prayer/audio/temp"
 
 os.makedirs(TEMP_AUDIO_DIR, exist_ok=True)
 
@@ -21,36 +14,17 @@ with open(SEQUENCE_PATH, "r", encoding="utf-8") as f:
     prayer_sequence = json.load(f)
 
 
-
-def resolve_prayer_path(value):
-    if not value:
-        return None
-
-    value = str(value)
-
-    # المسارات النسبية داخل مجلد prayer
-    if not os.path.isabs(value):
-        return os.path.join(BASE_DIR, value)
-
-    # توافق احتياطي مع المسارات القديمة
-    if "/prayer/" in value:
-        relative = value.split("/prayer/", 1)[1]
-        return os.path.join(BASE_DIR, relative)
-
-    return value
-
-
 def get_step_audio(item):
 
     if item.get("quran_audio"):
-        return resolve_prayer_path(item["quran_audio"])
+        return item["quran_audio"]
 
     if item.get("audio"):
-        return resolve_prayer_path(item["audio"])
+        return item["audio"]
 
     if item.get("audio_1") and item.get("audio_2"):
-        audio1 = AudioSegment.from_file(resolve_prayer_path(item["audio_1"]))
-        audio2 = AudioSegment.from_file(resolve_prayer_path(item["audio_2"]))
+        audio1 = AudioSegment.from_file(item["audio_1"])
+        audio2 = AudioSegment.from_file(item["audio_2"])
 
         pause = AudioSegment.silent(duration=400)
         combined = audio1 + pause + audio2
@@ -92,7 +66,7 @@ def render_step(index):
 
     audio_path = get_step_audio(item)
 
-    video_path = resolve_prayer_path(item.get("video"))
+    video_path = item.get("video")
 
     if video_path and os.path.exists(video_path):
         # إذا وُجد فيديو جاهز، نعرضه بدل الصورة والصوت المنفصل

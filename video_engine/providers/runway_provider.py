@@ -5,13 +5,12 @@ import mimetypes
 import re
 import requests
 import sys
-try:
-    from google.colab import userdata
-except ImportError:
-    userdata = None
+from google.colab import userdata
 from pathlib import Path
 
-VALIDATOR_DIR = str(Path(__file__).resolve().parents[1])
+VALIDATOR_DIR = str(
+    Path(__file__).resolve().parents[1]
+)
 
 if VALIDATOR_DIR not in sys.path:
     sys.path.insert(0, VALIDATOR_DIR)
@@ -691,8 +690,8 @@ def fadl_check_content_safety(request_data):
 # يسمح بتصفح واستخدام الأقسام المحلية،
 # لكنه يمنع أي توليد مدفوع حتى نفتحه نحن صراحة.
 
-FADL_WEB_TRIAL_MODE = False
-FADL_WEB_PAID_GENERATION_ENABLED = True
+FADL_WEB_TRIAL_MODE = True
+FADL_WEB_PAID_GENERATION_ENABLED = False
 
 
 def fadl_web_trial_allows_paid_generation():

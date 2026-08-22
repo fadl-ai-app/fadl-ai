@@ -1,0 +1,104 @@
+{
+  "target_total_options": 19,
+  "default_language": "العربية",
+  "default_dialect": "سودانية",
+  "auto_voice_gender": true,
+  "allow_manual_voice_gender": true,
+  "languages": {
+    "العربية": {
+      "code": "ar",
+      "dialects": [
+        "فصحى",
+        "سودانية",
+        "سعودية",
+        "مصرية",
+        "سورية",
+        "لبنانية",
+        "خليجية",
+        "عراقية",
+        "مغربية"
+      ]
+    },
+    "الإنجليزية": {
+      "code": "en",
+      "dialects": [
+        "عام",
+        "أمريكية",
+        "بريطانية"
+      ]
+    },
+    "التركية": {
+      "code": "tr",
+      "dialects": [
+        "عام"
+      ]
+    },
+    "الصينية": {
+      "code": "zh",
+      "dialects": [
+        "ماندرين"
+      ]
+    },
+    "الفرنسية": {
+      "code": "fr",
+      "dialects": [
+        "عام"
+      ]
+    },
+    "الإسبانية": {
+      "code": "es",
+      "dialects": [
+        "عام"
+      ]
+    },
+    "الألمانية": {
+      "code": "de",
+      "dialects": [
+        "عام"
+      ]
+    },
+    "الإيطالية": {
+      "code": "it",
+      "dialects": [
+        "عام"
+      ]
+    },
+    "الأوردية": {
+      "code": "ur",
+      "dialects": [
+        "عام"
+      ]
+    },
+    "الهندية": {
+      "code": "hi",
+      "dialects": [
+        "عام"
+      ]
+    },
+    "الإندونيسية": {
+      "code": "id",
+      "dialects": [
+        "عام"
+      ]
+    }
+  },
+  "voice_types": [
+    "تلقائي",
+    "امرأة",
+    "رجل",
+    "بنت",
+    "ولد"
+  ],
+  "child_voice_rules": {
+    "بنت": {
+      "category": "child_female",
+      "natural": true,
+      "avoid_cartoon_voice": true
+    },
+    "ولد": {
+      "category": "child_male",
+      "natural": true,
+      "avoid_cartoon_voice": true
+    }
+  }
+}

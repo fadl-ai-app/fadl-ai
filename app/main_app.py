@@ -2,28 +2,18 @@
 import sys
 import gradio as gr
 
-import os
-
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
-# يسمح بالاستيراد مثل: from video_engine...
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
-
-QURAN_CODE_DIR = os.path.join(BASE_DIR, "quran", "code")
-PRAYER_DIR = os.path.join(BASE_DIR, "prayer")
-WUDU_DIR = os.path.join(BASE_DIR, "wudu", "code")
-IMAGE_TO_VIDEO_DIR = os.path.join(BASE_DIR, "image_to_video", "code")
-TEXT_TO_VIDEO_DIR = os.path.join(BASE_DIR, "text_to_video", "code")
-VIDEO_ENGINE_DIR = os.path.join(BASE_DIR, "video_engine")
+QURAN_CODE_DIR = "/content/fadl_ai/quran/code"
+PRAYER_DIR = "/content/fadl_ai/prayer"
+WUDU_DIR = "/content/fadl_ai/wudu/code"
+IMAGE_TO_VIDEO_DIR = "/content/fadl_ai/image_to_video/code"
+TEXT_TO_VIDEO_DIR = "/content/fadl_ai/text_to_video/code"
 
 for path in [
     QURAN_CODE_DIR,
     PRAYER_DIR,
     WUDU_DIR,
     IMAGE_TO_VIDEO_DIR,
-    TEXT_TO_VIDEO_DIR,
-    VIDEO_ENGINE_DIR
+    TEXT_TO_VIDEO_DIR
 ]:
     if path not in sys.path:
         sys.path.insert(0, path)
@@ -387,13 +377,13 @@ def create_main_app():
 
                 gr.Markdown("### الأذان")
                 gr.Video(
-                    value=os.path.join(BASE_DIR, "prayer", "adhan", "adhan.mp4"),
+                    value="/content/fadl_ai/prayer/adhan/adhan.mp4",
                     label="فيديو الأذان"
                 )
 
                 gr.Markdown("### الإقامة")
                 gr.Video(
-                    value=os.path.join(BASE_DIR, "prayer", "iqama", "sadtalker_result", "2026_08_18_04.48.33.mp4"),
+                    value="/content/fadl_ai/prayer/iqama/sadtalker_result/2026_08_18_04.48.33.mp4",
                     label="فيديو الإقامة"
                 )
 
@@ -462,15 +452,10 @@ def create_main_app():
 
 if __name__ == "__main__":
     app = create_main_app()
-
-    project_root = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..")
-    )
-
     app.launch(
-        css=app.fadl_welcome_css,
-        share=False,
-        server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT", "7860")),
-        allowed_paths=[project_root]
-    )
+    css=app.fadl_welcome_css,
+    share=True,
+    allowed_paths=[
+        "/content/fadl_ai"
+    ]
+)
