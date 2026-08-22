@@ -858,12 +858,12 @@ def _confirm_and_generate_video_impl(confirmation_json):
     )
 
     # متابعة نفس المهمة فقط
-    for _ in range(120):
+    for attempt in range(48):
 
         r = requests.get(
             task_url,
             headers=headers,
-            timeout=30
+            timeout=15
         )
 
         if r.status_code != 200:
@@ -876,6 +876,11 @@ def _confirm_and_generate_video_impl(confirmation_json):
 
         task = r.json()
         task_status = task.get("status")
+
+        print(
+            f"[RUNWAY FOLLOW] محاولة {attempt + 1}/48 "
+            f"— الحالة: {task_status}"
+        )
 
         if task_status == "SUCCEEDED":
 
@@ -955,7 +960,8 @@ def _confirm_and_generate_video_impl(confirmation_json):
         time.sleep(5)
 
     return (
-        "⏳ المهمة ما زالت تعمل. لم يتم إرسال مهمة أخرى.",
+        "⏳ الفيديو ما زال قيد التوليد في Runway. "
+        "لم يتم إرسال مهمة ثانية ولم يتم تكرار الخصم.",
         None,
         None,
         ""
