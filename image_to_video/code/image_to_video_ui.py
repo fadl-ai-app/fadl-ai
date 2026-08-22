@@ -551,7 +551,8 @@ def add_image_to_video_ui():
             final_video,
             download_video,
             confirmation_data
-        ]
+        ],
+        show_progress="full"
     )
 
 
@@ -778,13 +779,16 @@ def _confirm_image_generation_impl(confirmation_json):
         runway_provider
     )
 
+    print("[IMAGE VIDEO] فتح Runway للمهمة:", job_id)
     runway_provider.ALLOWED_PAID_JOB_ID = job_id
     runway_provider.PAID_ENGINE_ENABLED = True
 
     try:
+        print("[IMAGE VIDEO] إرسال المهمة إلى Runway...")
         result = runway_provider.send_to_runway(
             job_id
         )
+        print("[IMAGE VIDEO] نتيجة الإرسال:", result)
 
     finally:
         runway_provider.PAID_ENGINE_ENABLED = False
@@ -800,6 +804,7 @@ def _confirm_image_generation_impl(confirmation_json):
         )
 
     task_id = result.get("task_id")
+    print("[IMAGE VIDEO] Task ID:", task_id)
 
     if not task_id:
         return (
@@ -854,6 +859,7 @@ def _confirm_image_generation_impl(confirmation_json):
 
         task = r.json()
         task_status = task.get("status")
+        print("[IMAGE VIDEO] Runway status:", task_status)
 
         if task_status == "SUCCEEDED":
 
@@ -868,6 +874,7 @@ def _confirm_image_generation_impl(confirmation_json):
                 )
 
             video_url = outputs[0]
+            print("[IMAGE VIDEO] رابط الفيديو وصل")
 
             output_dir = (
                 Path(BASE)
@@ -884,6 +891,7 @@ def _confirm_image_generation_impl(confirmation_json):
                 / f"{job_id}.mp4"
             )
 
+            print("[IMAGE VIDEO] تنزيل الفيديو...")
             vr = requests.get(
                 video_url,
                 timeout=120
@@ -908,10 +916,12 @@ def _confirm_image_generation_impl(confirmation_json):
                 + "_fadl.mp4"
             )
 
+            print("[IMAGE VIDEO] إضافة العلامة المائية...")
             add_fadl_watermark(
                 output_path,
                 watermarked_path
             )
+            print("[IMAGE VIDEO] العلامة المائية اكتملت")
 
             return (
                 "✅ تم توليد صورة → فيديو بنجاح\n"
