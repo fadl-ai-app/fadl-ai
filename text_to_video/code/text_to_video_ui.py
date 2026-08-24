@@ -816,13 +816,30 @@ def confirm_and_generate_video(confirmation_json):
     runway_provider.ALLOWED_PAID_JOB_ID = job_id
     runway_provider.PAID_ENGINE_ENABLED = True
 
+    old_trial_mode = getattr(
+        runway_provider,
+        "FADL_WEB_TRIAL_MODE",
+        True
+    )
+
+    old_paid_enabled = getattr(
+        runway_provider,
+        "FADL_WEB_PAID_GENERATION_ENABLED",
+        False
+    )
+
+    runway_provider.FADL_WEB_TRIAL_MODE = False
+    runway_provider.FADL_WEB_PAID_GENERATION_ENABLED = True
+
     try:
         result = runway_provider.send_to_runway(job_id)
 
     finally:
-        # إغلاق المحرك المدفوع فورًا
+        # إغلاق المحرك المدفوع فورًا وإرجاع الحماية
         runway_provider.PAID_ENGINE_ENABLED = False
         runway_provider.ALLOWED_PAID_JOB_ID = None
+        runway_provider.FADL_WEB_TRIAL_MODE = old_trial_mode
+        runway_provider.FADL_WEB_PAID_GENERATION_ENABLED = old_paid_enabled
 
     if not result.get("sent"):
         return (
