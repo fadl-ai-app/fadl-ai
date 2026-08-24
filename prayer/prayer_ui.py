@@ -80,17 +80,6 @@ def get_step_audio(item):
     return None
 
 
-def get_step_video(item):
-    video = item.get("video")
-    if not video:
-        return None
-
-    video_path = _resolve_path(video)
-    if video_path and os.path.exists(video_path):
-        return video_path
-
-    return None
-
 
 def render_step(index):
     index = int(index)
@@ -121,8 +110,6 @@ def render_step(index):
         details.append("الذكر: " + item["spoken_text"])
 
     audio_path = get_step_audio(item)
-    video_path = get_step_video(item)
-
     if not (audio_path and os.path.exists(audio_path)):
         audio_path = None
 
@@ -132,7 +119,6 @@ def render_step(index):
         item.get("action", ""),
         "\n".join(details),
         image_path,
-        video_path,
         audio_path,
     )
 
@@ -181,13 +167,9 @@ def add_prayer_ui():
         type="filepath"
     )
 
-    video_box = gr.Video(
-        value=first_step[5],
-        label="فيديو الحركة"
-    )
 
     audio_box = gr.Audio(
-        value=first_step[6],
+        value=first_step[5],
         label="صوت الحركة",
         type="filepath"
     )
@@ -205,7 +187,6 @@ def add_prayer_ui():
             action_box,
             details_box,
             image_box,
-            video_box,
             audio_box,
         ],
     )
@@ -219,7 +200,6 @@ def add_prayer_ui():
             action_box,
             details_box,
             image_box,
-            video_box,
             audio_box,
         ],
     )
@@ -230,6 +210,5 @@ def add_prayer_ui():
         action_box,
         details_box,
         image_box,
-        video_box,
         audio_box,
     )
