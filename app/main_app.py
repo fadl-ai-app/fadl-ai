@@ -269,16 +269,6 @@ def create_main_app():
     @keyframes fadlFadeOut {
         from {
 
-PROJECT_ROOT = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__),
-        ".."
-    )
-)
-
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-
             opacity: 1;
             visibility: visible;
         }
@@ -472,7 +462,6 @@ if PROJECT_ROOT not in sys.path:
                     action_box,
                     details_box,
                     image_box,
-                    video_box,
                     audio_box
                 ) = prayer_ui.add_prayer_ui()
 
@@ -485,7 +474,6 @@ if PROJECT_ROOT not in sys.path:
                         action_box,
                         details_box,
                         image_box,
-                        video_box,
                         audio_box
                     ]
                 )
@@ -533,6 +521,6 @@ if __name__ == "__main__":
     css=app.fadl_welcome_css,
     share=True,
     allowed_paths=[
-        "/content/fadl_ai"
+        PROJECT_ROOT
     ]
 )
