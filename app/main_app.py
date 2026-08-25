@@ -203,68 +203,10 @@ def create_main_app():
     }
 
 
-    /* FADL AI — small subscription control */
     .fadl-home {
         position: relative;
     }
 
-    .fadl-subscription-mini {
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        z-index: 20;
-        direction: rtl;
-    }
-
-    .fadl-subscription-mini summary {
-        list-style: none;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 13px;
-        border-radius: 14px;
-        background: #ffffff;
-        border: 1px solid rgba(212, 175, 55, 0.55);
-        box-shadow: 0 5px 16px rgba(0, 0, 0, 0.08);
-        font-size: 14px;
-        font-weight: 700;
-        user-select: none;
-    }
-
-    .fadl-subscription-mini summary::-webkit-details-marker {
-        display: none;
-    }
-
-    .fadl-subscription-panel {
-        width: 270px;
-        margin-top: 8px;
-        padding: 14px;
-        border-radius: 16px;
-        background: #ffffff;
-        border: 1px solid rgba(212, 175, 55, 0.35);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-        text-align: right;
-    }
-
-    .fadl-subscription-panel h3 {
-        margin: 0 0 8px 0;
-        font-size: 17px;
-    }
-
-    .fadl-subscription-panel p {
-        margin: 5px 0;
-        font-size: 13px;
-    }
-
-    .fadl-plan-line {
-        padding: 7px 0;
-        border-bottom: 1px solid #eeeeee;
-    }
-
-    .fadl-plan-line:last-child {
-        border-bottom: none;
-    }
 
     #fadl-welcome {
         position: fixed;
@@ -394,43 +336,6 @@ if PROJECT_ROOT not in sys.path:
                     """
                     <div class="fadl-home">
 
-                        <details class="fadl-subscription-mini">
-                            <summary>
-                                💎 الاشتراك
-                            </summary>
-
-                            <div class="fadl-subscription-panel">
-                                <h3>الاشتراك والخطط</h3>
-
-                                <p>
-                                    💎 الجوهرة الواحدة = $0.01
-                                </p>
-
-                                <div class="fadl-plan-line">
-                                    <strong>مجاني</strong><br>
-                                    تجربة أولية
-                                </div>
-
-                                <div class="fadl-plan-line">
-                                    <strong>الأساسية — $5</strong><br>
-                                    💎 500 جوهرة
-                                </div>
-
-                                <div class="fadl-plan-line">
-                                    <strong>المتقدمة — $10</strong><br>
-                                    💎 1,000 جوهرة
-                                </div>
-
-                                <div class="fadl-plan-line">
-                                    <strong>الكبيرة — $20</strong><br>
-                                    💎 2,000 جوهرة
-                                </div>
-
-                                <p>
-                                    الدفع سيُفعّل عند ربط الحساب.
-                                </p>
-                            </div>
-                        </details>
 
                         <div class="fadl-brand-banner">
                             <img
