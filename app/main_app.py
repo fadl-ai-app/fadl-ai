@@ -2,6 +2,7 @@ import os
 
 import sys
 import gradio as gr
+import subscription_ui
 
 # FADL AI PROJECT ROOT
 PROJECT_ROOT = os.path.abspath(
@@ -622,6 +623,11 @@ if PROJECT_ROOT not in sys.path:
             # نص إلى فيديو
             with gr.Tab("نص إلى فيديو"):
                 text_to_video_ui.add_text_to_video_ui()
+
+
+            # الاشتراك
+            with gr.Tab("💎 الاشتراك"):
+                subscription_ui.add_subscription_ui()
 
     app.fadl_welcome_css = welcome_css
     return app
