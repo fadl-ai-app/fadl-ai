@@ -534,11 +534,11 @@ if PROJECT_ROOT not in sys.path:
             with gr.Tab("💎 الاشتراك"):
                 subscription_balance_box = subscription_ui.add_subscription_ui()
 
-    app.load(
-        fn=subscription_ui._show_user_balance,
-        inputs=None,
-        outputs=subscription_balance_box,
-    )
+        app.load(
+            fn=subscription_ui._show_user_balance,
+            inputs=None,
+            outputs=subscription_balance_box,
+        )
 
     app.fadl_welcome_css = welcome_css
     return app
