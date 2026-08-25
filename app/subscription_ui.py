@@ -102,6 +102,64 @@ def get_country_info(country):
     """
 
 
+
+def get_payment_methods(country):
+    """طرق الدفع للعرض فقط — لا دفع حقيقي."""
+
+    methods = {
+        "🇸🇩 السودان": [
+            "بنكك — بنك الخرطوم",
+            "Visa / Mastercard",
+        ],
+
+        "🇪🇬 مصر": [
+            "Meeza",
+            "Apple Pay",
+            "Visa / Mastercard",
+        ],
+
+        "🇸🇦 السعودية": [
+            "مدى",
+            "STC Pay",
+            "Apple Pay",
+            "Visa / Mastercard",
+        ],
+
+        "🇦🇪 الإمارات": [
+            "Apple Pay",
+            "Samsung Pay",
+            "Visa / Mastercard",
+        ],
+
+        "🌍 دولة أخرى": [
+            "Visa / Mastercard",
+        ],
+    }
+
+    return gr.update(
+        choices=methods.get(country, []),
+        value=None
+    )
+
+def get_plan_choices(country):
+    """إظهار الباقات الخاصة بالدولة المختارة."""
+
+    if not country or country not in SUBSCRIPTION_DATA:
+        return gr.update(choices=[], value=None)
+
+    plans = SUBSCRIPTION_DATA[country]["plans"]
+
+    choices = [
+        f"{gems} — {price}"
+        for gems, price in plans
+    ]
+
+    return gr.update(
+        choices=choices,
+        value=None
+    )
+
+
 def add_subscription_ui():
 
     gr.Markdown(
@@ -126,10 +184,43 @@ def add_subscription_ui():
         """
     )
 
+    plan_choice = gr.Radio(
+        choices=[],
+        label="💎 اختر الباقة",
+        value=None,
+    )
+
+    payment_choice = gr.Radio(
+        choices=[],
+        label="💳 اختر طريقة الدفع",
+        value=None,
+    )
+
+    gr.Markdown(
+        """
+        🔒 **هذه معاينة فقط.**
+
+        اختيار الباقة وطريقة الدفع لا ينفذ أي عملية مالية
+        ولا يضيف جواهر حاليًا.
+        """
+    )
+
     country.change(
         fn=get_country_info,
         inputs=country,
         outputs=country_info,
+    )
+
+    country.change(
+        fn=get_plan_choices,
+        inputs=country,
+        outputs=plan_choice,
+    )
+
+    country.change(
+        fn=get_payment_methods,
+        inputs=country,
+        outputs=payment_choice,
     )
 
 
