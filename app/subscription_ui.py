@@ -1,4 +1,5 @@
 import gradio as gr
+import gem_manager
 
 
 # ==========================================
@@ -160,7 +161,15 @@ def get_plan_choices(country):
     )
 
 
+def _show_user_balance(request: gr.Request):
+    username = request.username or "guest"
+    balance = gem_manager.get_balance(username)
+    return f"👤 المستخدم: **{username}**  |  💎 الرصيد: **{balance} جوهرة**"
+
+
 def add_subscription_ui():
+
+    balance_box = gr.Markdown("💎 جاري تحميل الرصيد...")
 
     gr.Markdown(
         """
@@ -232,6 +241,8 @@ def add_subscription_ui():
         inputs=country,
         outputs=payment_choice,
     )
+
+    return balance_box
 
 
 if __name__ == "__main__":
