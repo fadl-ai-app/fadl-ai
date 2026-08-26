@@ -596,9 +596,19 @@ def prepare_paid_generation(
         ""
     )
 
+    silent_instruction = ""
+
+    if mode == "silent":
+        silent_instruction = (
+            " No speech. No dialogue. No human voice. "
+            "No talking. No lip movement. "
+            "The character remains completely silent."
+        )
+
     effective_prompt = (
         prompt
         + motion_instruction
+        + silent_instruction
     ).strip()
 
     # =====================================================
