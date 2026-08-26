@@ -658,7 +658,7 @@ def preview_image_video_cost(job_id):
     )
 
 
-def confirm_image_generation(confirmation_json):
+def confirm_image_generation(confirmation_json, request: gr.Request):
 
     import importlib
     import time
@@ -723,6 +723,49 @@ def confirm_image_generation(confirmation_json):
             encoding="utf-8"
         )
     )
+
+    username = request.username or "guest"
+    duration = int(request.get("duration_seconds", 5))
+    required_gems = gem_manager.credits_to_gems(duration * 5)
+    current_balance = gem_manager.get_balance(username)
+
+    if current_balance < required_gems:
+        return (
+            f"✗ الرصيد غير كافٍ\n"
+            f"المطلوب: {required_gems} جوهرة\n"
+            f"رصيدك: {current_balance} جوهرة",
+            None,
+            None,
+            ""
+        )
+
+    username = request.username or "guest"
+    duration = int(request.get("duration_seconds", 5))
+    required_gems = gem_manager.credits_to_gems(duration * 5)
+    current_balance = gem_manager.get_balance(username)
+
+    if current_balance < required_gems:
+        return (
+            f"✗ الرصيد غير كافٍ\n"
+            f"المطلوب: {required_gems} جوهرة\n"
+            f"رصيدك: {current_balance} جوهرة",
+            None,
+            None,
+            ""
+        )
+
+    charged, new_balance = gem_manager.spend_gems(
+        username,
+        required_gems
+    )
+
+    if not charged:
+        return (
+            "✗ تعذر خصم الجواهر",
+            None,
+            None,
+            ""
+        )
 
     request["type"] = "image_to_video"
     request["model"] = "gen4_turbo"
@@ -800,6 +843,7 @@ def confirm_image_generation(confirmation_json):
         runway_provider.ALLOWED_PAID_JOB_ID = None
 
     if not result.get("sent"):
+        gem_manager.refund_gems(username, required_gems)
         return (
             "✗ لم يتم قبول المهمة في Runway\n"
             + str(result.get("message", result)),
@@ -853,6 +897,7 @@ def confirm_image_generation(confirmation_json):
         )
 
         if r.status_code != 200:
+            gem_manager.refund_gems(username, required_gems)
             return (
                 "✗ خطأ أثناء متابعة Runway: "
                 f"{r.status_code}",
@@ -893,16 +938,27 @@ def confirm_image_generation(confirmation_json):
                 / f"{job_id}.mp4"
             )
 
-            vr = requests.get(
-                video_url,
-                timeout=120
-            )
+            try:
+                vr = requests.get(
+                    video_url,
+                    timeout=120
+                )
 
-            vr.raise_for_status()
+                vr.raise_for_status()
 
-            output_path.write_bytes(
-                vr.content
-            )
+                output_path.write_bytes(
+                    vr.content
+                )
+
+            except Exception as e:
+                gem_manager.refund_gems(username, required_gems)
+                return (
+                    "✗ فشل تنزيل الفيديو النهائي\n"
+                    + str(e),
+                    None,
+                    None,
+                    ""
+                )
 
             # =============================================
             # FADL_OFFICIAL_WATERMARK_APPLIED
@@ -917,10 +973,22 @@ def confirm_image_generation(confirmation_json):
                 + "_fadl.mp4"
             )
 
-            add_fadl_watermark(
-                output_path,
-                watermarked_path
-            )
+            try:
+                add_fadl_watermark(
+                    output_path,
+                    watermarked_path
+                )
+
+            except Exception as e:
+                gem_manager.refund_gems(username, required_gems)
+                return (
+                    "✗ تم إنشاء الفيديو لكن فشلت إضافة علامة فضل AI\n"
+                    "تم إرجاع الجواهر إلى رصيدك\n"
+                    + str(e),
+                    None,
+                    None,
+                    ""
+                )
 
             return (
                 "✅ تم توليد صورة → فيديو بنجاح\n"
@@ -936,6 +1004,7 @@ def confirm_image_generation(confirmation_json):
             )
 
         if task_status == "FAILED":
+            gem_manager.refund_gems(username, required_gems)
             return (
                 "✗ فشل التوليد\n"
                 f"السبب: {task.get('failure')}",
@@ -948,6 +1017,7 @@ def confirm_image_generation(confirmation_json):
             "CANCELED",
             "CANCELLED"
         ):
+            gem_manager.refund_gems(username, required_gems)
             return (
                 "✗ تم إلغاء المهمة في Runway",
                 None,
