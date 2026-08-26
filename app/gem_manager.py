@@ -142,3 +142,139 @@ init_db()
 def refund_gems(username, amount):
     """إرجاع الجواهر للمستخدم عند فشل التوليد."""
     return add_gems(username, amount)
+
+
+TRIAL_CREDIT_LIMIT = 500
+
+
+def _init_trial_usage():
+    if _use_postgres():
+        with _pg_connect() as con:
+            with con.cursor() as cur:
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS system_usage (
+                        name TEXT PRIMARY KEY,
+                        value INTEGER NOT NULL DEFAULT 0
+                    )
+                """)
+                cur.execute("""
+                    INSERT INTO system_usage(name, value)
+                    VALUES('trial_credits_used', 0)
+                    ON CONFLICT(name) DO NOTHING
+                """)
+
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS trial_credit_reservations (
+                        job_id TEXT PRIMARY KEY,
+                        credits INTEGER NOT NULL
+                    )
+                """)
+        return
+
+
+def get_trial_credits_used():
+    if not _use_postgres():
+        return 0
+
+    _init_trial_usage()
+
+    with _pg_connect() as con:
+        with con.cursor() as cur:
+            cur.execute(
+                "SELECT value FROM system_usage WHERE name=%s",
+                ("trial_credits_used",)
+            )
+            row = cur.fetchone()
+            return int(row[0]) if row else 0
+
+
+def reserve_trial_credits(job_id, credits):
+    credits = int(credits)
+
+    if credits <= 0:
+        return True, get_trial_credits_used()
+
+    if not _use_postgres():
+        return True, 0
+
+    _init_trial_usage()
+
+    with _pg_connect() as con:
+        with con.cursor() as cur:
+
+            cur.execute(
+                "SELECT credits FROM trial_credit_reservations "
+                "WHERE job_id=%s",
+                (str(job_id),)
+            )
+            existing = cur.fetchone()
+
+            if existing:
+                return True, get_trial_credits_used()
+
+            cur.execute(
+                "SELECT value FROM system_usage "
+                "WHERE name=%s FOR UPDATE",
+                ("trial_credits_used",)
+            )
+
+            row = cur.fetchone()
+            used = int(row[0]) if row else 0
+
+            if used + credits > TRIAL_CREDIT_LIMIT:
+                return False, used
+
+            cur.execute(
+                "UPDATE system_usage SET value=value+%s "
+                "WHERE name=%s",
+                (credits, "trial_credits_used")
+            )
+
+            cur.execute(
+                "INSERT INTO trial_credit_reservations(job_id, credits) "
+                "VALUES(%s, %s)",
+                (str(job_id), credits)
+            )
+
+    return True, used + credits
+
+
+def release_trial_credits(job_id):
+    if not _use_postgres():
+        return True
+
+    _init_trial_usage()
+
+    with _pg_connect() as con:
+        with con.cursor() as cur:
+            cur.execute(
+                "SELECT credits FROM trial_credit_reservations "
+                "WHERE job_id=%s FOR UPDATE",
+                (str(job_id),)
+            )
+            row = cur.fetchone()
+
+            if not row:
+                return False
+
+            credits = int(row[0])
+
+            cur.execute(
+                "SELECT value FROM system_usage "
+                "WHERE name=%s FOR UPDATE",
+                ("trial_credits_used",)
+            )
+            usage = cur.fetchone()
+            used = int(usage[0]) if usage else 0
+
+            cur.execute(
+                "UPDATE system_usage SET value=%s WHERE name=%s",
+                (max(0, used - credits), "trial_credits_used")
+            )
+
+            cur.execute(
+                "DELETE FROM trial_credit_reservations WHERE job_id=%s",
+                (str(job_id),)
+            )
+
+    return True

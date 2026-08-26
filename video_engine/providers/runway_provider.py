@@ -21,6 +21,13 @@ if VALIDATOR_DIR not in sys.path:
 import request_validator
 
 BASE = Path(__file__).resolve().parents[2]
+
+APP_DIR = str(BASE / "app")
+if APP_DIR not in sys.path:
+    sys.path.insert(0, APP_DIR)
+
+import gem_manager
+
 JOBS_FILE = BASE / "video_engine" / "jobs.json"
 
 SENT_JOBS_FILE = BASE / "video_engine" / "runway_sent_jobs.json"
@@ -1158,6 +1165,22 @@ Consistent human anatomy throughout the video.
                 )
         }
 
+    trial_allowed, trial_used = gem_manager.reserve_trial_credits(
+        job_id,
+        quota.get("credits", 0)
+    )
+
+    if not trial_allowed:
+        release_daily_credits(job_id)
+        return {
+            "sent": False,
+            "charged": False,
+            "trial_limit_blocked": True,
+            "trial_used": trial_used,
+            "trial_limit": gem_manager.TRIAL_CREDIT_LIMIT,
+            "message": "تم الوصول إلى سقف النسخة التجريبية."
+        }
+
     try:
         response = requests.post(
             endpoint,
@@ -1170,6 +1193,7 @@ Consistent human anatomy throughout the video.
 
         # Runway لم يؤكد قبول المهمة
         release_daily_credits(job_id)
+        gem_manager.release_trial_credits(job_id)
 
         return {
             "sent": False,
@@ -1183,6 +1207,7 @@ Consistent human anatomy throughout the video.
 
         # لم يتم قبول المهمة، نرجع الحجز
         release_daily_credits(job_id)
+        gem_manager.release_trial_credits(job_id)
 
         return {
             "sent": False,
@@ -1215,7 +1240,7 @@ Consistent human anatomy throughout the video.
         "daily_limit":
             GLOBAL_DAILY_CREDIT_LIMIT,
         "message":
-            "تم إرسال المهمة إلى Runway مرة واحدة"
+            "تم إرسال مهمة التوليد مرة واحدة"
     }
 
 
