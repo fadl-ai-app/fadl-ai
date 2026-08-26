@@ -137,3 +137,8 @@ def credits_to_gems(credits):
 
 
 init_db()
+
+
+def refund_gems(username, amount):
+    """إرجاع الجواهر للمستخدم عند فشل التوليد."""
+    return add_gems(username, amount)

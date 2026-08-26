@@ -1,5 +1,6 @@
 
 import gradio as gr
+import gem_manager
 import os
 import json
 import uuid
@@ -444,6 +445,7 @@ def _prepare_paid_generation_legacy_unused(
             )
 
     cost = calculate_runway_cost(duration)
+    gems_cost = gem_manager.credits_to_gems(cost)
 
     message = (
         "=== معاينة قبل التوليد ===\n"
@@ -451,7 +453,8 @@ def _prepare_paid_generation_legacy_unused(
         f"نوع الصوت: {voice_type}\n"
         f"وضع الفيديو: {mode}\n"
         f"الحركة: {motion_choice}\n"
-        f"التكلفة المتوقعة: {cost} Credits\n\n"
+        f"التكلفة المتوقعة: {cost} Credits\n"
+        f"تكلفة الجواهر: {gems_cost} جوهرة\n\n"
         "🔒 لم يتم إرسال الطلب إلى Runway\n"
         "🔒 لم يتم استهلاك Credits\n"
         "اضغطي تأكيد التوليد فقط إذا أردتِ المتابعة."
@@ -647,7 +650,8 @@ def prepare_paid_generation(
         f"نوع الصوت: {voice_type}\n"
         f"وضع الفيديو: {mode}\n"
         f"الحركة: {motion_choice}\n"
-        f"التكلفة المتوقعة: {cost} Credits\n\n"
+        f"التكلفة المتوقعة: {cost} Credits\n"
+        f"تكلفة الجواهر: {gems_cost} جوهرة\n\n"
         "🔒 لم يتم إرسال أي طلب بعد\n"
         "🔒 لم يتم استهلاك Credits\n"
         "اضغطي «تأكيد التوليد» مرة واحدة فقط للمتابعة."
@@ -662,7 +666,7 @@ def prepare_paid_generation(
     )
 
 
-def confirm_and_generate_video(confirmation_json):
+def confirm_and_generate_video(confirmation_json, request: gr.Request):
 
     import time
     import requests
@@ -701,6 +705,37 @@ def confirm_and_generate_video(confirmation_json):
     if not _consume_confirmation(token):
         return (
             "🔒 تم منع التوليد المكرر لهذا التأكيد",
+            None,
+            None,
+            ""
+        )
+
+    username = request.username or "guest"
+    required_gems = gem_manager.credits_to_gems(
+        calculate_runway_cost(
+            int(data.get("duration_seconds", 5))
+        )
+    )
+    current_balance = gem_manager.get_balance(username)
+
+    if current_balance < required_gems:
+        return (
+            f"✗ الرصيد غير كافٍ\n"
+            f"المطلوب: {required_gems} جوهرة\n"
+            f"رصيدك: {current_balance} جوهرة",
+            None,
+            None,
+            ""
+        )
+
+    charged, new_balance = gem_manager.spend_gems(
+        username,
+        required_gems
+    )
+
+    if not charged:
+        return (
+            "✗ تعذر خصم الجواهر",
             None,
             None,
             ""
@@ -834,6 +869,16 @@ def confirm_and_generate_video(confirmation_json):
     try:
         result = runway_provider.send_to_runway(job_id)
 
+    except Exception as e:
+        gem_manager.refund_gems(username, required_gems)
+        return (
+            "✗ حدث خطأ أثناء إرسال المهمة إلى Runway\n"
+            + str(e),
+            None,
+            None,
+            ""
+        )
+
     finally:
         # إغلاق المحرك المدفوع فورًا وإرجاع الحماية
         runway_provider.PAID_ENGINE_ENABLED = False
@@ -842,6 +887,7 @@ def confirm_and_generate_video(confirmation_json):
         runway_provider.FADL_WEB_PAID_GENERATION_ENABLED = old_paid_enabled
 
     if not result.get("sent"):
+        gem_manager.refund_gems(username, required_gems)
         return (
             "✗ لم يتم قبول المهمة في Runway\n"
             + str(result.get("message", result)),
@@ -893,6 +939,7 @@ def confirm_and_generate_video(confirmation_json):
         )
 
         if r.status_code != 200:
+            gem_manager.refund_gems(username, required_gems)
             return (
                 f"✗ خطأ أثناء متابعة Runway: {r.status_code}",
                 None,
@@ -921,15 +968,26 @@ def confirm_and_generate_video(confirmation_json):
                 OUTPUTS_DIR
             ) / f"{job_id}.mp4"
 
-            vr = requests.get(
-                video_url,
-                timeout=120
-            )
-            vr.raise_for_status()
+            try:
+                vr = requests.get(
+                    video_url,
+                    timeout=120
+                )
+                vr.raise_for_status()
 
-            output_path.write_bytes(
-                vr.content
-            )
+                output_path.write_bytes(
+                    vr.content
+                )
+
+            except Exception as e:
+                gem_manager.refund_gems(username, required_gems)
+                return (
+                    "✗ فشل تنزيل الفيديو النهائي\n"
+                    + str(e),
+                    None,
+                    None,
+                    ""
+                )
 
             # =============================================
             # FADL_OFFICIAL_WATERMARK_APPLIED
@@ -944,10 +1002,21 @@ def confirm_and_generate_video(confirmation_json):
                 + "_fadl.mp4"
             )
 
-            add_fadl_watermark(
-                output_path,
-                watermarked_path
-            )
+            try:
+                add_fadl_watermark(
+                    output_path,
+                    watermarked_path
+                )
+            except Exception as e:
+                gem_manager.refund_gems(username, required_gems)
+                return (
+                    "✗ تم إنشاء الفيديو لكن فشلت إضافة علامة فضل AI\n"
+                    "تم إرجاع الجواهر إلى رصيدك\n"
+                    + str(e),
+                    None,
+                    None,
+                    ""
+                )
 
             return (
                 "✅ تم توليد الفيديو بنجاح\n"
@@ -962,6 +1031,7 @@ def confirm_and_generate_video(confirmation_json):
             )
 
         if task_status == "FAILED":
+            gem_manager.refund_gems(username, required_gems)
             return (
                 "✗ فشل التوليد\n"
                 f"السبب: {task.get('failure')}",
@@ -971,6 +1041,7 @@ def confirm_and_generate_video(confirmation_json):
             )
 
         if task_status == "CANCELED":
+            gem_manager.refund_gems(username, required_gems)
             return (
                 "✗ تم إلغاء المهمة",
                 None,

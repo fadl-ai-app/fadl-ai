@@ -1,6 +1,7 @@
 
 from pathlib import Path
 import gradio as gr
+import gem_manager
 import os
 import shutil
 import uuid
@@ -629,6 +630,7 @@ def preview_image_video_cost(job_id):
     )
 
     cost = duration * 5
+    gems_cost = gem_manager.credits_to_gems(cost)
     token = str(uuid.uuid4())
 
     confirmation = {
@@ -642,7 +644,8 @@ def preview_image_video_cost(job_id):
         f"رقم المهمة: {job_id}\n"
         f"الوضع: {request.get('mode')}\n"
         f"المدة: {duration} ثوانٍ\n"
-        f"التكلفة المتوقعة: {cost} Credits\n\n"
+        f"التكلفة المتوقعة: {cost} Credits\n"
+        f"تكلفة الجواهر: {gems_cost} جوهرة\n\n"
         "🔒 لم يتم إرسال الطلب بعد"
     )
 
