@@ -2,4 +2,5 @@ gradio
 requests
 pillow
 numpy
-python-dotenv psycopg[binary]
+python-dotenv
+psycopg[binary]
