@@ -845,7 +845,7 @@ def confirm_image_generation(confirmation_json, request: gr.Request):
     if not result.get("sent"):
         gem_manager.refund_gems(username, required_gems)
         return (
-            "✗ لم يتم قبول المهمة في Runway\n"
+            "✗ لم يتم قبول مهمة التوليد\n"
             + str(result.get("message", result)),
             None,
             None,
@@ -856,7 +856,7 @@ def confirm_image_generation(confirmation_json, request: gr.Request):
 
     if not task_id:
         return (
-            "✗ Runway قبل الطلب لكن لم يرجع Task ID",
+            "✗ تم قبول الطلب لكن تعذر بدء متابعة التوليد",
             None,
             None,
             ""
@@ -899,7 +899,7 @@ def confirm_image_generation(confirmation_json, request: gr.Request):
         if r.status_code != 200:
             gem_manager.refund_gems(username, required_gems)
             return (
-                "✗ خطأ أثناء متابعة Runway: "
+                "✗ خطأ أثناء متابعة التوليد: "
                 f"{r.status_code}",
                 None,
                 None,
@@ -997,7 +997,7 @@ def confirm_image_generation(confirmation_json, request: gr.Request):
                 f"✅ التكلفة المتوقعة: "
                 f"{confirmation.get('estimated_credits')} Credits\n"
                 "✅ تم تنزيل الفيديو النهائي\n"
-                "🔒 تم إغلاق Runway بعد الإرسال",
+                "🔒 تم إغلاق محرك التوليد بأمان بعد الإرسال",
                 str(watermarked_path),
                 str(watermarked_path),
                 ""
@@ -1019,7 +1019,7 @@ def confirm_image_generation(confirmation_json, request: gr.Request):
         ):
             gem_manager.refund_gems(username, required_gems)
             return (
-                "✗ تم إلغاء المهمة في Runway",
+                "✗ تم إلغاء مهمة التوليد",
                 None,
                 None,
                 ""
