@@ -609,6 +609,8 @@ def prepare_paid_generation(
         duration
     )
 
+    gems_cost = gem_manager.credits_to_gems(cost)
+
     # رمز تأكيد لمرة واحدة
     confirm_token = str(
         uuid.uuid4()
