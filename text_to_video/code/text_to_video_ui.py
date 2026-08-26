@@ -447,6 +447,8 @@ def _prepare_paid_generation_legacy_unused(
     cost = calculate_runway_cost(duration)
     gems_cost = gem_manager.credits_to_gems(cost)
 
+    gems_cost = gem_manager.credits_to_gems(cost)
+
     message = (
         "=== معاينة قبل التوليد ===\n"
         f"المدة: {int(duration)} ثوانٍ\n"
