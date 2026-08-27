@@ -51,8 +51,14 @@ if __name__ == "__main__":
         server_name="0.0.0.0",
         server_port=port,
         share=False,
-        auth=(
-            os.environ["FADL_ADMIN_USER"],
-            os.environ["FADL_ADMIN_PASS"]
-        )
+        auth=[
+            (
+                os.environ["FADL_ADMIN_USER"],
+                os.environ["FADL_ADMIN_PASS"]
+            ),
+            (
+                os.environ["FADL_REVIEW_USER"],
+                os.environ["FADL_REVIEW_PASS"]
+            )
+        ]
     )
