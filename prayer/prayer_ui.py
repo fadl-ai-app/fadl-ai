@@ -113,12 +113,30 @@ def render_step(index):
     if not (audio_path and os.path.exists(audio_path)):
         audio_path = None
 
+    video_path = None
+    action = item.get("action", "")
+
+    if action == "القراءة":
+        video_path = str(PRAYER_ROOT / "reading" / "reading_preview.mp4")
+    elif action == "الجلوس بين السجدتين":
+        video_path = str(PRAYER_ROOT / "rabbi_ighfir_li" / "rabbi_ighfir_li_preview.mp4")
+    elif action == "التشهد":
+        video_path = str(PRAYER_ROOT / "tashahhud" / "tashahhud_preview.mp4")
+
+    if video_path and not os.path.exists(video_path):
+        video_path = None
+
+    # إذا كان لهذه الخطوة فيديو جاهز، نعرض الفيديو بدل الصورة الثابتة
+    if video_path:
+        image_path = None
+
     return (
         index,
         f"{index + 1} / {len(prayer_sequence)}",
-        item.get("action", ""),
+        action,
         "\n".join(details),
         image_path,
+        video_path,
         audio_path,
     )
 
@@ -168,8 +186,13 @@ def add_prayer_ui():
     )
 
 
-    audio_box = gr.Audio(
+    video_box = gr.Video(
         value=first_step[5],
+        label="حركة الصلاة"
+    )
+
+    audio_box = gr.Audio(
+        value=first_step[6],
         label="صوت الحركة",
         type="filepath"
     )
@@ -187,6 +210,7 @@ def add_prayer_ui():
             action_box,
             details_box,
             image_box,
+            video_box,
             audio_box,
         ],
     )
@@ -200,6 +224,7 @@ def add_prayer_ui():
             action_box,
             details_box,
             image_box,
+            video_box,
             audio_box,
         ],
     )
@@ -210,5 +235,6 @@ def add_prayer_ui():
         action_box,
         details_box,
         image_box,
+        video_box,
         audio_box,
     )
