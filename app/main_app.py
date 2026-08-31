@@ -480,6 +480,7 @@ if PROJECT_ROOT not in sys.path:
                     action_box,
                     details_box,
                     image_box,
+                    video_box,
                     audio_box
                 ) = prayer_ui.add_prayer_ui()
 
@@ -492,7 +493,8 @@ if PROJECT_ROOT not in sys.path:
                         action_box,
                         details_box,
                         image_box,
-                            audio_box
+                        video_box,
+                        audio_box
                     ]
                 )
 
