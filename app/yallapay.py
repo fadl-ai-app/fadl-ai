@@ -15,7 +15,7 @@ import requests
 # ============================================================
 
 YALLAPAY_TEST_URL = (
-    "https://gateway-dev.yallapaysudan.com"
+    "https://gateway.yallapaysudan.com"
     "/api/v1/gateway/generatePaymentLink"
 )
 

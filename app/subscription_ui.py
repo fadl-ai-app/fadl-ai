@@ -1,5 +1,6 @@
 import gradio as gr
 import gem_manager
+from yallapay import create_test_payment_link
 
 
 # ==========================================
@@ -109,6 +110,7 @@ def get_payment_methods(country):
 
     methods = {
         "🇸🇩 السودان": [
+            "YallaPay TEST",
             "بنكك — بنك الخرطوم",
             "Visa / Mastercard",
         ],
@@ -167,6 +169,74 @@ def _show_user_balance(request: gr.Request):
     return f"👤 المستخدم: **{username}**  |  💎 الرصيد: **{balance} جوهرة**"
 
 
+
+def create_yallapay_test_link(country, plan_choice, payment_choice, request: gr.Request):
+    if country != "🇸🇩 السودان":
+        return "⚠️ YallaPay TEST متاح حاليًا للسودان فقط."
+
+    if not plan_choice:
+        return "⚠️ اختاري الباقة أولًا."
+
+    if payment_choice != "YallaPay TEST":
+        return "⚠️ اختاري YallaPay TEST كطريقة دفع."
+
+    import re
+
+    match = re.search(
+        r"💎\s*([\d,]+)\s*جوهرة\s*—\s*([\d,]+)",
+        plan_choice
+    )
+
+    if not match:
+        return "❌ تعذر قراءة الباقة المختارة."
+
+    gems = int(match.group(1).replace(",", ""))
+    amount = int(match.group(2).replace(",", ""))
+
+    username = request.username or "guest"
+
+    try:
+        data = create_test_payment_link(
+            amount=amount,
+            description=f"Fadl AI — {gems} gems — {username}",
+        )
+    except Exception as e:
+        return f"❌ فشل إنشاء رابط YallaPay TEST:\n\n`{e}`"
+
+    payment_url = None
+
+    if isinstance(data, dict):
+        for key in ["paymentUrl", "paymentURL", "payment_url", "url"]:
+            if data.get(key):
+                payment_url = str(data[key])
+                break
+
+        nested = data.get("data")
+
+        if isinstance(nested, dict) and not payment_url:
+            for key in ["paymentUrl", "paymentURL", "payment_url", "url"]:
+                if nested.get(key):
+                    payment_url = str(nested[key])
+                    break
+
+    if payment_url:
+        return (
+            "### 💳 رابط دفع YallaPay TEST\n\n"
+            f"**الباقة:** 💎 {gems:,} جوهرة  \n"
+            f"**المبلغ:** {amount:,} جنيه سوداني  \n\n"
+            f"[🔗 فتح صفحة الدفع TEST]({payment_url})\n\n"
+            "⚠️ **TEST فقط — لم تتم إضافة أي جواهر.**"
+        )
+
+    return (
+        "### ⚠️ استجابة YallaPay TEST\n\n"
+        "لم يتم العثور على رابط الدفع في الاستجابة:\n\n"
+        f"`{data}`\n\n"
+        "**لم تتم إضافة أي جواهر.**"
+    )
+
+
+
 def add_subscription_ui():
 
     balance_box = gr.Markdown("💎 جاري تحميل الرصيد...")
@@ -217,11 +287,20 @@ def add_subscription_ui():
 
     gr.Markdown(
         """
-        🔒 **هذه معاينة فقط.**
+        🧪 **YallaPay TEST**
 
-        اختيار الباقة وطريقة الدفع لا ينفذ أي عملية مالية
-        ولا يضيف جواهر حاليًا.
+        تجربة إنشاء رابط الدفع فقط.
+        لا تتم إضافة الجواهر من زر الدفع.
         """
+    )
+
+    payment_button = gr.Button(
+        "💳 إنشاء رابط دفع YallaPay TEST",
+        variant="primary",
+    )
+
+    payment_result = gr.Markdown(
+        "اختاري السودان + الباقة + YallaPay TEST ثم اضغطي الزر."
     )
 
     country.change(
@@ -229,6 +308,13 @@ def add_subscription_ui():
         inputs=country,
         outputs=country_info,
     )
+
+    payment_button.click(
+        fn=create_yallapay_test_link,
+        inputs=[country, plan_choice, payment_choice],
+        outputs=payment_result,
+    )
+
 
     country.change(
         fn=get_plan_choices,
