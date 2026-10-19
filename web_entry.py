@@ -52,10 +52,6 @@ except Exception:
 # ============================================================
 
 from app.main_app import create_main_app
-from app.yallapay import (
-    verify_test_webhook,
-    parse_test_webhook,
-)
 
 gradio_app = create_main_app()
 
@@ -66,84 +62,6 @@ gradio_app = create_main_app()
 fastapi_app = FastAPI(
     title="Fadl AI",
 )
-
-# ============================================================
-# YallaPay TEST Webhook
-# المرحلة الأولى: استقبال + تحقق فقط
-# لا إضافة جواهر
-# لا تعديل قاعدة البيانات
-# ============================================================
-
-@fastapi_app.post("/api/yallapay/test/webhook")
-async def yallapay_test_webhook(request: Request):
-
-    try:
-        raw_body = await request.body()
-
-        signature = request.headers.get(
-            "YallaPay-Signature",
-            "",
-        )
-
-        timestamp = request.headers.get(
-            "YallaPay-TimeStamp",
-            "",
-        )
-
-        verified = verify_test_webhook(
-            raw_body=raw_body,
-            signature=signature,
-            timestamp=timestamp,
-        )
-
-        if not verified:
-            return JSONResponse(
-                status_code=401,
-                content={
-                    "ok": False,
-                    "message": "Invalid webhook signature",
-                },
-            )
-
-        data = parse_test_webhook(raw_body)
-
-        print("✅ YallaPay TEST Webhook verified")
-        print(
-            "clientReferenceId:",
-            data.get("clientReferenceId"),
-        )
-        print(
-            "paymentReferenceId:",
-            data.get("paymentReferenceId"),
-        )
-        print(
-            "status:",
-            data.get("status"),
-        )
-
-        return JSONResponse(
-            status_code=200,
-            content={
-                "ok": True,
-                "verified": True,
-                "status": data.get("status"),
-            },
-        )
-
-    except Exception as e:
-
-        print(
-            "❌ YallaPay TEST Webhook error:",
-            e,
-        )
-
-        return JSONResponse(
-            status_code=400,
-            content={
-                "ok": False,
-                "message": "Webhook processing failed",
-            },
-        )
 
 # ============================================================
 # تركيب Gradio داخل FastAPI
