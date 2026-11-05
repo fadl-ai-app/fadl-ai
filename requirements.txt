@@ -4,3 +4,5 @@ pillow
 numpy
 python-dotenv
 psycopg[binary]
+fastapi
+uvicorn

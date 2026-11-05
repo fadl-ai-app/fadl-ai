@@ -56,6 +56,11 @@ from app.main_app import create_main_app
 gradio_app = create_main_app()
 
 # ============================================================
+# FADL AI Film Studio — independent section
+# ============================================================
+from studio_ui.app import demo as film_studio_demo
+
+# ============================================================
 # FastAPI — Webhook Layer
 # ============================================================
 
@@ -67,20 +72,33 @@ fastapi_app = FastAPI(
 # تركيب Gradio داخل FastAPI
 # ============================================================
 
+# Keep the existing administrator and reviewer credentials
+# shared by both Gradio sections.
+auth_users = [
+    (
+        os.environ["FADL_ADMIN_USER"],
+        os.environ["FADL_ADMIN_PASS"],
+    ),
+    (
+        os.environ["FADL_REVIEW_USER"],
+        os.environ["FADL_REVIEW_PASS"],
+    ),
+]
+
+# Register the specific Studio route BEFORE the root application.
+app = gr.mount_gradio_app(
+    fastapi_app,
+    film_studio_demo,
+    path="/film-studio",
+    auth=auth_users,
+)
+
+# Existing FADL AI main application remains mounted at root.
 app = gr.mount_gradio_app(
     fastapi_app,
     gradio_app,
     path="/",
-    auth=[
-        (
-            os.environ["FADL_ADMIN_USER"],
-            os.environ["FADL_ADMIN_PASS"],
-        ),
-        (
-            os.environ["FADL_REVIEW_USER"],
-            os.environ["FADL_REVIEW_PASS"],
-        ),
-    ],
+    auth=auth_users,
 )
 
 # ============================================================
