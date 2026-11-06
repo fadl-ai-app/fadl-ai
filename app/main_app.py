@@ -398,6 +398,17 @@ if PROJECT_ROOT not in sys.path:
                                 <p>حوّل وصفك إلى مشهد فيديو</p>
                             </div>
 
+                            <a
+                                href="/film-studio/"
+                                class="fadl-card-home"
+                                style="display: block; color: inherit; text-decoration: none;"
+                                aria-label="فتح استديو الأفلام"
+                            >
+                                <div class="emoji">🎬</div>
+                                <h3>استديو الأفلام</h3>
+                                <p>إدارة الأفلام والشخصيات والمواقع واستمرارية القصة</p>
+                            </a>
+
                         </div>
                     </div>
                     """
